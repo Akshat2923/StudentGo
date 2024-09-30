@@ -1,6 +1,7 @@
 package com.example.studentgo
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -15,6 +16,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d("DEBUG","onCreate() triggered")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -31,5 +34,41 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        Log.d("DEBUG", "onPause() triggered")
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        Log.d("DEBUG", "onResume() triggered")
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        Log.d("DEBUG", "onStart() triggered")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+
+        Log.d("DEBUG", "onRestart() triggered")
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        Log.d("DEBUG", "onStop() triggered")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Log.d("DEBUG", "onDestroy() triggered")
     }
 }
