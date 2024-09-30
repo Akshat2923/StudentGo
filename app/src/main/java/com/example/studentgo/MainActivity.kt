@@ -14,10 +14,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private val logTag = "MAIN"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d("DEBUG","onCreate() triggered")
+        Log.d(logTag,"onCreate() triggered")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -39,36 +41,36 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
 
-        Log.d("DEBUG", "onPause() triggered")
+        Log.d(logTag, "onPause() triggered")
     }
 
     override fun onResume() {
         super.onResume()
 
-        Log.d("DEBUG", "onResume() triggered")
+        Log.d(logTag, "onResume() triggered")
     }
 
     override fun onStart() {
         super.onStart()
 
-        Log.d("DEBUG", "onStart() triggered")
+        Log.d(logTag, "onStart() triggered")
     }
 
     override fun onRestart() {
         super.onRestart()
 
-        Log.d("DEBUG", "onRestart() triggered")
+        Log.d(logTag, "onRestart() triggered")
     }
 
     override fun onStop() {
         super.onStop()
 
-        Log.d("DEBUG", "onStop() triggered")
+        Log.d(logTag, "onStop() triggered")
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        Log.d("DEBUG", "onDestroy() triggered")
+        Log.d(logTag, "onDestroy() triggered")
     }
 }
