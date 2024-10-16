@@ -13,4 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Ignore google-services.json in all directories
 **/google-services.json
+
+# Or explicitly for your path
+/app/src/google-services.json
