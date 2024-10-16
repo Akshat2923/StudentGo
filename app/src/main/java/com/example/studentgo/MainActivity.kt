@@ -48,10 +48,14 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
-        if(currentUser == null) {
+        Log.d("MainActivity", "Current user: ${currentUser?.uid ?: "No user"}")
+        if (currentUser == null) {
             // Not signed in, launch the Login activity
             startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            finish() // Close MainActivity to prevent going back to it
+        } else {
+            // User is signed in, navigate to home
+            Log.d("MainActivity", "User is signed in, navigating to home.")
         }
     }
 }
