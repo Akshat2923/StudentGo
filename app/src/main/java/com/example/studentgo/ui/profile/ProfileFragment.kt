@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.studentgo.LoginActivity
+import com.example.studentgo.MainActivity
 import com.example.studentgo.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -50,6 +51,17 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        // Update account button
+        binding.updateButton.setOnClickListener {
+            val newEmail = binding.emailEditText.text.toString()
+            profileViewModel.updateUser(newEmail) { success ->
+                if (success) {
+                    Toast.makeText(requireContext(), "Please check your email to confirm", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Inavlid email", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         return binding.root
     }
 
