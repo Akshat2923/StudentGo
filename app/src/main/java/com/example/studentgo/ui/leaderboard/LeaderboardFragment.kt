@@ -1,4 +1,4 @@
-package com.example.studentgo.ui.dashboard
+package com.example.studentgo.ui.leaderboard
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.studentgo.databinding.FragmentDashboardBinding
+import com.example.studentgo.databinding.FragmentLeaderboardBinding
 
-class DashboardFragment : Fragment() {
+class LeaderboardFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentLeaderboardBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,14 +22,14 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+        val leaderboardViewModel =
+            ViewModelProvider(this).get(LeaderboardViewModel::class.java)
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentLeaderboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
+        leaderboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
