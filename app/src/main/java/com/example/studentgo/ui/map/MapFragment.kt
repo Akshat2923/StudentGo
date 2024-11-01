@@ -197,7 +197,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
             .show()
     }
 
-    fun handleCircleClick(circle: Circle) {
+    private fun handleCircleClick(circle: Circle) {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -220,7 +220,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                     visitButton.visibility = View.VISIBLE
                 } else {
                     Log.d("CIRCLE", "Not within 50.0 meters.")
-                    visitButton.visibility = View.VISIBLE
+                    visitButton.visibility = View.GONE
                 }
             }
         }
