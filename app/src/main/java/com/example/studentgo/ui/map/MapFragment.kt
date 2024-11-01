@@ -4,12 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -18,10 +20,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.studentgo.R
 import com.example.studentgo.databinding.FragmentMapBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
@@ -36,6 +42,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
     private var permissionDenied = false
     private lateinit var map: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var visitButton: Button
+
+    private val transparentRed = Color.argb(120, 255, 139, 139)
 
 
     override fun onCreateView(
@@ -43,17 +53,24 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val mapViewModel =
-            ViewModelProvider(this).get(MapViewModel::class.java)
+//        val mapViewModel = ViewModelProvider(this).get(MapViewModel::class.java)
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Adding? Google Maps fragment
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Find the button by ID
+        visitButton = view.findViewById(R.id.visitButton)
     }
 
     override fun onDestroyView() {
@@ -76,6 +93,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                 .position(baker)
                 .title("Baker Systems")
         )
+
+        // Add a circle around Baker Systems
+        map.addCircle(
+            CircleOptions()
+                .center(baker)
+                .radius(50.0) // Meters
+                .strokeWidth(0f)
+                .fillColor(transparentRed)
+                .clickable(true)
+        )
+
+        map.setOnCircleClickListener {
+            handleCircleClick(it)
+        }
+
+        map.setOnMapClickListener { visitButton.visibility = View.GONE }
 
         // TODO: get coordinates for each location, store them in an iterable structure,
         // and call a function which adds a marker to each set of coordinates
@@ -148,7 +181,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
     override fun onMyLocationButtonClick(): Boolean {
         val context = requireContext()
-        Toast.makeText(context, "MyLocation button clicked", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, "MyLocation button clicked", Toast.LENGTH_SHORT).show()
 //        Above matches SDK example. The comments below are added in WhereAmIKotlin
 //        if (hasLocationPermission()) {
 //            findLocation()
@@ -164,42 +197,34 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
             .show()
     }
 
-// The below code is found in the Google example code
-//    // [START maps_check_location_permission_result]
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<String>,
-//        grantResults: IntArray
-//    ) {
-//        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-//            super.onRequestPermissionsResult(
-//                requestCode,
-//                permissions,
-//                grantResults
-//            )
-//            return
-//        }
-//
-//        if (isPermissionGranted(
-//                permissions,
-//                grantResults,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) || isPermissionGranted(
-//                permissions,
-//                grantResults,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            )
-//        ) {
-//            // Enable the my location layer if the permission has been granted.
-//            enableMyLocation()
-//        } else {
-//            // Permission was denied. Display an error message
-//            // [START_EXCLUDE]
-//            // Display the missing permission error dialog when the fragments resume.
-//            permissionDenied = true
-//            // [END_EXCLUDE]
-//        }
-//    }
+    fun handleCircleClick(circle: Circle) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                val circleLocation = Location("").apply {
+                    latitude = circle.center.latitude
+                    longitude = circle.center.longitude
+                }
+
+                val distance = location.distanceTo(circleLocation)
+
+                if (distance < 50.0) {
+                    Log.d("CIRCLE", "Within 50.0 meters.")
+                    // Create VISIT button and give it a listener
+                    visitButton.visibility = View.VISIBLE
+                } else {
+                    Log.d("CIRCLE", "Not within 50.0 meters.")
+                    visitButton.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
 
     companion object {
         /**
