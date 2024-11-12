@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.android)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.activity)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -64,6 +65,9 @@ dependencies {
 
     // Maps SDK for Android
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+
+    // leaderboard
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
 }
 
 secrets {
