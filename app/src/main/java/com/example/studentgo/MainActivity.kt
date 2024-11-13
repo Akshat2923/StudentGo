@@ -56,9 +56,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish() // Close MainActivity to prevent going back to it
             } else {
-                // FirebaseUser is signed in, navigate to home
-//                email = currentUser.email ?: ""
-                currentUser.email?.let { mapViewModel.setEmail(it) }
+                // FirebaseUser is signed in
+                currentUser.email?.let {
+                    mapViewModel.setEmail(it)
+                    mapViewModel.getUser(it)
+                }
             }
         }
     }
