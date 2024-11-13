@@ -21,10 +21,10 @@
         android:layout_gravity="center_horizontal" />
 
     <Button
-        android:id="@+id/b_end"
+        android:id="@+id/b_leaderboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset Score"
+        android:text="Add To Leaderboard"
         android:layout_gravity="center_horizontal" />
 
     <androidx.recyclerview.widget.RecyclerView
