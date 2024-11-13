@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("kotlin-kapt") // Correct: use "kapt", not "katz"
 }
 
 android {
@@ -68,6 +69,9 @@ dependencies {
 
     // leaderboard
     implementation("androidx.recyclerview:recyclerview:1.2.1")
+
+    implementation("androidx.room:room-runtime:2.5.0")
+    kapt("androidx.room:room-compiler:2.4.1")
 }
 
 secrets {
