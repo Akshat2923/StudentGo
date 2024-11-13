@@ -63,7 +63,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     private val mapViewModel: MapViewModel by activityViewModels()
     private lateinit var knownLocations: List<RoomKnownLocation>
 
-    private var userModel: RoomUser? = RoomUser("", 0, "")
+    private lateinit var userModel: RoomUser
+    private lateinit var email: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,24 +101,24 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         mapViewModel.initialize(locationRepository, userRepository)
 
         // Action to be taken when the button is clicked
-        var countExternal = 0
         visitButton.setOnClickListener {
-//            handleVisitButtonClick()
+            handleVisitButtonClick()
         }
 
         mapViewModel.user.observe(viewLifecycleOwner) { roomUser ->
             userModel = roomUser
         }
+
+        mapViewModel.email.observe(viewLifecycleOwner) { emailObserved ->
+            email = emailObserved
+        }
     }
 
-//    private fun handleVisitButtonClick() {
-//        val email = FirebaseAuth.getInstance().currentUser?.email
-//        if (email != null) {
-//            userModel.score += 1
-//            Log.d("TEST", "Score: ${userModel.score}")
-//            mapViewModel.updateUser(userModel)
-//        }
-//    }
+    private fun handleVisitButtonClick() {
+        userModel.score += 1
+        Log.d("TEST", "Score: ${userModel.score}")
+        mapViewModel.updateUser(userModel)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
