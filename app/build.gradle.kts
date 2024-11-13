@@ -79,6 +79,11 @@ dependencies {
     // Maps SDK for Android
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
+
+    // leaderboard
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+
+    implementation("androidx.room:room-runtime:2.5.0")
 }
 
 secrets {
