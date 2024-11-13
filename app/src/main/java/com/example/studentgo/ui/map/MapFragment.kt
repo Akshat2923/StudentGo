@@ -29,6 +29,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 
@@ -46,6 +47,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     private lateinit var visitButton: Button
 
     private val transparentRed = Color.argb(120, 255, 139, 139)
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+
+        // Define OSU campus boundaries
+        private val OSU_NORTH_EAST = LatLng(40.004679, -83.005945) // Roughly Lane Ave & High St
+        private val OSU_SOUTH_WEST = LatLng(39.996112, -83.024656) // Roughly King Ave & Olentangy
+
+        // Define min and max zoom levels
+        private const val MIN_ZOOM = 14f  // Shows most of campus
+        private const val MAX_ZOOM = 19f  // Close enough to see buildings clearly
+    }
 
 
     override fun onCreateView(
@@ -81,11 +94,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     // Event listener for the map reaching a ready state
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        val baker = LatLng(40.00163942803014, -83.01591779635797)
-        val zoom = 15.0f // 'city-level' zoom
 
-        // Move the camera to the desired location and set the zoom level
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(baker, zoom))
+        // Create bounds for OSU campus
+        val osuBounds = LatLngBounds(OSU_SOUTH_WEST, OSU_NORTH_EAST)
+
+        // Set camera bounds
+        map.setLatLngBoundsForCameraTarget(osuBounds)
+
+        // Set zoom restrictions
+        map.setMinZoomPreference(MIN_ZOOM)
+        map.setMaxZoomPreference(MAX_ZOOM)
+
+        // Your existing Baker Systems marker code
+        val baker = LatLng(40.00163942803014, -83.01591779635797)
+
+        // Move camera to center of campus with appropriate zoom
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(baker, 15.0f))
 
         // Add a marker to Baker Systems
         map.addMarker(
@@ -129,6 +153,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         googleMap.setOnMyLocationButtonClickListener(this)
         googleMap.setOnMyLocationClickListener(this)
         enableMyLocation()
+        // Add padding to bounds to ensure user can see slightly outside campus
+        val padding = 0 // Or add some padding if desired
+        map.setOnCameraMoveStartedListener { reason ->
+            if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                // Keep camera within bounds when user tries to pan
+                val cameraPosition = map.cameraPosition
+                if (!osuBounds.contains(cameraPosition.target)) {
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(osuBounds, padding))
+                }
+            }
+        }
     }
 
     /**
@@ -226,12 +261,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         }
     }
 
-    companion object {
-        /**
-         * Request code for location permission request.
-         *
-         * @see .onRequestPermissionsResult
-         */
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-    }
+//    companion object {
+//        /**
+//         * Request code for location permission request.
+//         *
+//         * @see .onRequestPermissionsResult
+//         */
+//        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+//    }
 }
