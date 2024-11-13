@@ -16,10 +16,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.rotationMatrix
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
 import com.example.studentgo.R
+import com.example.studentgo.StudentGoApp
 import com.example.studentgo.databinding.FragmentMapBinding
+import com.example.studentgo.model.KnownLocationRepository
+import com.example.studentgo.model.UserRepository
+import com.example.studentgo.model.firestore.FirebaseKnownLocationDaoImplementation
+import com.example.studentgo.model.firestore.FirebaseUserDao
+import com.example.studentgo.model.firestore.FirebaseUserDaoImplementation
+import com.example.studentgo.model.room.RoomKnownLocation
+import com.example.studentgo.model.room.RoomUser
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -31,6 +43,8 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import kotlin.math.log
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
     GoogleMap.OnMyLocationClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -40,21 +54,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private var permissionDenied = false
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var visitButton: Button
 
     private val transparentRed = Color.argb(120, 255, 139, 139)
 
+    private val mapViewModel: MapViewModel by activityViewModels()
+    private lateinit var knownLocations: List<RoomKnownLocation>
+
+    private var userModel: RoomUser? = RoomUser("", 0, "")
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        val mapViewModel = ViewModelProvider(this).get(MapViewModel::class.java)
-
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -71,7 +86,38 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
         // Find the button by ID
         visitButton = view.findViewById(R.id.visitButton)
+
+        // Get the application instance to access the database
+        val application = requireActivity().application as StudentGoApp
+        val localLocationDao = application.database.roomKnownLocationDao()
+        val remoteLocationDao = FirebaseKnownLocationDaoImplementation()
+        val localUserDao = application.database.roomUserDao()
+        val remoteUserDao = FirebaseUserDaoImplementation()
+
+        // Create the repository and pass it to the ViewModel
+        val locationRepository = KnownLocationRepository(application, localLocationDao, remoteLocationDao)
+        val userRepository = UserRepository(application, localUserDao, remoteUserDao)
+        mapViewModel.initialize(locationRepository, userRepository)
+
+        // Action to be taken when the button is clicked
+        var countExternal = 0
+        visitButton.setOnClickListener {
+//            handleVisitButtonClick()
+        }
+
+        mapViewModel.user.observe(viewLifecycleOwner) { roomUser ->
+            userModel = roomUser
+        }
     }
+
+//    private fun handleVisitButtonClick() {
+//        val email = FirebaseAuth.getInstance().currentUser?.email
+//        if (email != null) {
+//            userModel.score += 1
+//            Log.d("TEST", "Score: ${userModel.score}")
+//            mapViewModel.updateUser(userModel)
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -87,31 +133,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         // Move the camera to the desired location and set the zoom level
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(baker, zoom))
 
-        // Add a marker to Baker Systems
-        map.addMarker(
-            MarkerOptions()
-                .position(baker)
-                .title("Baker Systems")
-        )
-
-        // Add a circle around Baker Systems
-        map.addCircle(
-            CircleOptions()
-                .center(baker)
-                .radius(50.0) // Meters
-                .strokeWidth(0f)
-                .fillColor(transparentRed)
-                .clickable(true)
-        )
-
         map.setOnCircleClickListener {
             handleCircleClick(it)
         }
 
         map.setOnMapClickListener { visitButton.visibility = View.GONE }
 
-        // TODO: get coordinates for each location, store them in an iterable structure,
-        // and call a function which adds a marker to each set of coordinates
+        mapViewModel.getKnownLocations()
+        mapViewModel.locations.observe(viewLifecycleOwner) { locations ->
+            knownLocations = locations
+            updateMapKnownLocations(knownLocations, map)
+        }
 
         // Custom style to hide labels
         try {
@@ -126,8 +158,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         }
 
         // Add settings for getting the user's location
-        googleMap.setOnMyLocationButtonClickListener(this)
-        googleMap.setOnMyLocationClickListener(this)
         enableMyLocation()
     }
 
@@ -152,23 +182,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
             return
         }
 
-//        This section found in the example code from Google
-//        // 2. If if a permission rationale dialog should be shown
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                activity,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) || ActivityCompat.shouldShowRequestPermissionRationale(
-//                activity,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            )
-//        ) {
-//            PermissionUtils.RationaleDialog.newInstance(
-//                LOCATION_PERMISSION_REQUEST_CODE, true
-//            ).show(childFragmentManager, "dialog")
-//            return
-//        }
-
-        // 3. Otherwise, request permission
+        // 2. Otherwise, request permission
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(
@@ -180,13 +194,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     }
 
     override fun onMyLocationButtonClick(): Boolean {
-        val context = requireContext()
-//        Toast.makeText(context, "MyLocation button clicked", Toast.LENGTH_SHORT).show()
-//        Above matches SDK example. The comments below are added in WhereAmIKotlin
-//        if (hasLocationPermission()) {
-//            findLocation()
-//        }
-
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
         return false
@@ -215,11 +222,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                 val distance = location.distanceTo(circleLocation)
 
                 if (distance < 50.0) {
-                    Log.d("CIRCLE", "Within 50.0 meters.")
-                    // Create VISIT button and give it a listener
                     visitButton.visibility = View.VISIBLE
                 } else {
-                    Log.d("CIRCLE", "Not within 50.0 meters.")
                     visitButton.visibility = View.GONE
                 }
             }
@@ -233,5 +237,27 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
          * @see .onRequestPermissionsResult
          */
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
+
+    private fun updateMapKnownLocations(locations: List<RoomKnownLocation>, map: GoogleMap) {
+        for (location in locations) {
+            val position = LatLng(location.latitude, location.longitude)
+            val name = location.name
+
+            map.addMarker(
+                MarkerOptions()
+                    .position(position)
+                    .title(name)
+            )
+
+            map.addCircle(
+                CircleOptions()
+                    .center(position)
+                    .radius(50.0) // Meters
+                    .strokeWidth(0f)
+                    .fillColor(transparentRed)
+                    .clickable(true)
+            )
+        }
     }
 }
