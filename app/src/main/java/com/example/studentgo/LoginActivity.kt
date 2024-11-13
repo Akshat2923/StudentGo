@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity() {
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val currentUser = firebaseAuth.currentUser
             if (currentUser != null) {
-                // User is signed in, navigate to MainActivity
+                // FirebaseUser is signed in, navigate to MainActivity
                 startActivity(Intent(this, MainActivity::class.java))
                 finish() // Close LoginActivity to prevent going back to it
             }
