@@ -10,7 +10,7 @@ interface FirebaseUserDao {
     suspend fun deleteUser(user: FirebaseUser)
     // TODO: the above should run whenever a user deletes their account, which is already happening on firebase
 
-    suspend fun getUser(email: String): FirebaseUser
+    suspend fun getUser(email: String): FirebaseUser?
 
     suspend fun convertToLocalModel(user: FirebaseUser): RoomUser?
 

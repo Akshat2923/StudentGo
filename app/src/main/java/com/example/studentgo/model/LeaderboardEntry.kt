@@ -1,4 +1,4 @@
-package com.example.studentgo.models
+package com.example.studentgo.model
 
 data class LeaderboardEntry(
     val userName: String = "",

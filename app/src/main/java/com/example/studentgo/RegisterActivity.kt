@@ -7,10 +7,9 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.example.studentgo.databinding.ActivityRegisterActivtyBinding
-import com.example.studentgo.models.LeaderboardEntry
+import com.example.studentgo.model.LeaderboardEntry
 import com.google.firebase.firestore.ktx.firestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -20,8 +19,8 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterActivtyBinding
     private lateinit var auth: FirebaseAuth
-    private val database = FirebaseDatabase.getInstance()
-    private val leaderboardRef = database.reference.child("leaderboard")
+    private val database = Firebase.firestore
+    private val leaderboardRef = database.collection("leaderboard")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +79,8 @@ class RegisterActivity : AppCompatActivity() {
         Log.d("Leaderboard", "Score retrieved: $score")
         val entry = LeaderboardEntry(userEmail, score)
 
-        leaderboardRef.child(userId).setValue(entry)
+//        leaderboardRef.child(userId).setValue(entry)
+        leaderboardRef.document(userEmail).set(entry)
             .addOnSuccessListener {
                 Log.d("Leaderboard", "User added to leaderboard successfully")
             }
@@ -109,7 +109,8 @@ class RegisterActivity : AppCompatActivity() {
             }
 
         val entry = LeaderboardEntry(userEmail, newScore)
-        leaderboardRef.child(userId).setValue(entry)
+//        leaderboardRef.child(userId).setValue(entry)
+        leaderboardRef.document(userEmail).set(entry)
             .addOnSuccessListener {
                 Log.d("Leaderboard", "Leaderboard score updated successfully")
             }

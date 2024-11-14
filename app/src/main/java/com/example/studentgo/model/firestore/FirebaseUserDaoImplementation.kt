@@ -54,14 +54,22 @@ class FirebaseUserDaoImplementation: FirebaseUserDao {
         return firebaseUser
     }
 
-    override suspend fun getUser(email: String): FirebaseUser {
-        Log.d("TEST", "Email is: $email")
-        val data = firestore.collection("users").document(email).get().await()
+    override suspend fun getUser(email: String): FirebaseUser? {
+        var user: FirebaseUser? = null
 
-        return FirebaseUser(
-            email = data.getString("email") ?: "",
-            name = data.getString("name") ?: "",
-            score = data.getLong("score")?.toInt() ?: 0
-        )
+        val data = firestore.collection("users").document(email).get()
+            .addOnSuccessListener { document ->
+                user = if (document == null) {
+                    null
+                } else {
+                    FirebaseUser(
+                        email = document.getString("email") ?: "",
+                        name = document.getString("name") ?: "",
+                        score = document.getLong("score")?.toInt() ?: 0
+                    )
+                }
+            }
+
+        return user
     }
 }
