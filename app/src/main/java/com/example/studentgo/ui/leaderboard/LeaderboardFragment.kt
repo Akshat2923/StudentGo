@@ -13,7 +13,7 @@
 ////import androidx.recyclerview.widget.RecyclerView
 ////import com.example.studentgo.R
 ////import com.example.studentgo.databinding.FragmentLeaderboardBinding
-////import com.example.studentgo.model.LeaderboardEntry
+////import com.example.studentgo.models.LeaderboardEntry
 ////import com.google.firebase.database.*
 ////
 ////class LeaderboardFragment : Fragment() {
@@ -165,7 +165,7 @@
 //import androidx.recyclerview.widget.RecyclerView
 //import com.example.studentgo.R
 //import com.example.studentgo.databinding.FragmentLeaderboardBinding
-//import com.example.studentgo.model.LeaderboardEntry
+//import com.example.studentgo.models.LeaderboardEntry
 //import com.google.firebase.auth.FirebaseAuth
 //import com.google.firebase.database.*
 //
@@ -306,7 +306,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -319,10 +318,6 @@ import com.example.studentgo.databinding.FragmentLeaderboardBinding
 import com.example.studentgo.model.LeaderboardEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 class LeaderboardFragment : Fragment() {
 
@@ -334,7 +329,7 @@ class LeaderboardFragment : Fragment() {
     private lateinit var leaderboardAdapter: LeaderboardAdapter
     private val handler = Handler(Looper.getMainLooper())
 
-    private lateinit var leaderboardRef: CollectionReference
+    private lateinit var leaderboardRef: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
     private val resetRunnable = object : Runnable {
@@ -356,9 +351,8 @@ class LeaderboardFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         // Initialize Firebase Database reference for leaderboard
-        val database = Firebase.firestore
-//        leaderboardRef = database.reference.child("leaderboard")
-        leaderboardRef = database.collection("leaderboard")
+        val database = FirebaseDatabase.getInstance()
+        leaderboardRef = database.reference.child("leaderboard")
 
         // Initialize RecyclerView and Adapter
         leaderboardAdapter = LeaderboardAdapter(leaderboardEntries)
