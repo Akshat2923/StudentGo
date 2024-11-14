@@ -5,6 +5,7 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.google.devtools.ksp")
     id("androidx.room")
+    id("kotlin-kapt")
 }
 
 android {
@@ -75,10 +76,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
+
     // Maps SDK for Android
     implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
 
     // leaderboard
     implementation("androidx.recyclerview:recyclerview:1.2.1")
@@ -86,6 +86,8 @@ dependencies {
     implementation("androidx.room:room-runtime:2.5.0")
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+    implementation("com.google.firebase:firebase-database-ktx")
+    kapt("androidx.room:room-compiler:2.4.1")
 }
 
 secrets {
