@@ -4,12 +4,17 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.example.studentgo.databinding.ActivityRegisterActivtyBinding
 import com.example.studentgo.models.LeaderboardEntry
+import com.google.firebase.firestore.ktx.firestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import android.util.Log
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -55,7 +60,10 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Account created successfully.", Toast.LENGTH_SHORT).show()
 
                     user?.let {
-                        addUserToLeaderboard(it.uid, email)
+                        // Launch coroutine to add the user to the leaderboard
+                        lifecycleScope.launch {
+                            addUserToLeaderboard(it.uid, email) // Add the user with the current score
+                        }
                     }
 
                     startActivity(Intent(this, MainActivity::class.java))
@@ -67,16 +75,46 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    // Helper function to add a user entry to the leaderboard with an initial score of 0
-    private fun addUserToLeaderboard(userId: String, userEmail: String) {
-        val initialScore = 0
-        val entry = LeaderboardEntry(userEmail, initialScore)
+    private suspend fun addUserToLeaderboard(userId: String, userEmail: String) {
+        val score = getUserScoreFromFirestore(userEmail) // Get the current score from Firestore
+        Log.d("Leaderboard", "Score retrieved: $score")
+        val entry = LeaderboardEntry(userEmail, score)
+
         leaderboardRef.child(userId).setValue(entry)
             .addOnSuccessListener {
-                // Successfully added initial score
+                Log.d("Leaderboard", "User added to leaderboard successfully")
             }
             .addOnFailureListener {
-                // Handle failure if needed
+                Log.e("Leaderboard", "Failed to add user to leaderboard", it)
+            }
+    }
+
+    private suspend fun getUserScoreFromFirestore(email: String): Int {
+        val firestore = Firebase.firestore
+        val userDoc = firestore.collection("users").document(email).get().await()
+        val score = userDoc.getLong("score")?.toInt() ?: 0
+        Log.d("Firestore", "User score: $score")
+        return score
+    }
+
+    // Update the user's score
+    fun updateUserScore(userId: String, userEmail: String, newScore: Int) {
+        val firestore = Firebase.firestore
+        firestore.collection("users").document(userEmail).update("score", newScore)
+            .addOnSuccessListener {
+                Log.d("Firestore", "Score updated successfully in Firestore")
+            }
+            .addOnFailureListener {
+                Log.e("Firestore", "Failed to update score in Firestore", it)
+            }
+
+        val entry = LeaderboardEntry(userEmail, newScore)
+        leaderboardRef.child(userId).setValue(entry)
+            .addOnSuccessListener {
+                Log.d("Leaderboard", "Leaderboard score updated successfully")
+            }
+            .addOnFailureListener {
+                Log.e("Leaderboard", "Failed to update leaderboard score", it)
             }
     }
 }

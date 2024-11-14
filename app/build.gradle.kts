@@ -5,7 +5,6 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.google.devtools.ksp")
     id("androidx.room")
-    id("kotlin-kapt")
 }
 
 android {
@@ -51,6 +50,7 @@ android {
 dependencies {
     // Start of Room Dependencies
     implementation(libs.androidx.room.runtime)
+    implementation(libs.firebase.firestore.ktx)
     annotationProcessor(libs.room.compiler)
     // Kotlin Symbol Processing libraries
     ksp(libs.room.compiler)
@@ -83,11 +83,9 @@ dependencies {
     // leaderboard
     implementation("androidx.recyclerview:recyclerview:1.2.1")
 
-    implementation("androidx.room:room-runtime:2.5.0")
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     implementation("com.google.firebase:firebase-database-ktx")
-    kapt("androidx.room:room-compiler:2.4.1")
 }
 
 secrets {
