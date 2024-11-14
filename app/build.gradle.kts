@@ -50,6 +50,7 @@ android {
 dependencies {
     // Start of Room Dependencies
     implementation(libs.androidx.room.runtime)
+    implementation(libs.firebase.firestore.ktx)
     annotationProcessor(libs.room.compiler)
     // Kotlin Symbol Processing libraries
     ksp(libs.room.compiler)
@@ -75,15 +76,16 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
+
     // Maps SDK for Android
     implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
 
     // leaderboard
     implementation("androidx.recyclerview:recyclerview:1.2.1")
 
-    implementation("androidx.room:room-runtime:2.5.0")
+    implementation ("com.google.android.material:material:1.9.0")
+    implementation ("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+    implementation("com.google.firebase:firebase-database-ktx")
 }
 
 secrets {

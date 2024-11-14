@@ -1,6 +1,7 @@
 package com.example.studentgo.model
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.Keep
 import com.example.studentgo.StudentGoApp
 import com.example.studentgo.model.firestore.FirebaseUserDao
@@ -17,14 +18,35 @@ class UserRepository (
         // before fetching from Firestore. These methods will be interacted with from another
         // layer of the architecture
 
-    suspend fun getUser(email: String): RoomUser? {
+    suspend fun createUser(email: String): RoomUser {
+        val user = RoomUser(
+            email,
+            0,
+            ""
+        )
+
+        localDao.insertUser(user)
+        remoteDao.insertUser(remoteDao.convertToRemoteModel(user))
+        return user
+    }
+
+    suspend fun getUser(email: String): RoomUser {
         var user = localDao.getUser(email)
 
         if (user == null) {
             val remoteUser = remoteDao.getUser(email)
-            user = remoteDao.convertToLocalModel(remoteUser)
-            if (user != null) {
-                localDao.insertUser(user)
+
+            if (remoteUser == null) {
+                user = createUser(email)
+                // Run again
+                getUser(email)
+            } else {
+                user = remoteDao.convertToLocalModel(remoteUser)
+                if (user != null) {
+                    localDao.insertUser(user)
+                } else {
+                    user = createUser(email)
+                }
             }
         }
 
