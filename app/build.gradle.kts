@@ -71,6 +71,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
 
     implementation("androidx.room:room-runtime:2.5.0")
+    implementation("com.google.firebase:firebase-database-ktx")
     kapt("androidx.room:room-compiler:2.4.1")
 }
 
