@@ -368,21 +368,21 @@ class LeaderboardFragment : Fragment() {
         }
 
         // Set up listener to get leaderboard updates from Firebase
-        leaderboardRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                leaderboardEntries.clear() // Clear the list to avoid duplicates
-                for (entrySnapshot in snapshot.children) {
-                    val entry = entrySnapshot.getValue(LeaderboardEntry::class.java)
-                    entry?.let { leaderboardEntries.add(it) }
-                }
-                leaderboardEntries.sortByDescending { it.score } // Sort by score
-                leaderboardAdapter.notifyDataSetChanged() // Notify adapter of data change
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle error (e.g., log the error message)
-            }
-        })
+//        leaderboardRef.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                leaderboardEntries.clear() // Clear the list to avoid duplicates
+//                for (entrySnapshot in snapshot.children) {
+//                    val entry = entrySnapshot.getValue(LeaderboardEntry::class.java)
+//                    entry?.let { leaderboardEntries.add(it) }
+//                }
+//                leaderboardEntries.sortByDescending { it.score } // Sort by score
+//                leaderboardAdapter.notifyDataSetChanged() // Notify adapter of data change
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Handle error (e.g., log the error message)
+//            }
+//        })
 
         // Display the initial score
         updateScoreDisplay()
@@ -417,13 +417,13 @@ class LeaderboardFragment : Fragment() {
         val userId = auth.currentUser?.uid ?: return // Unique key for each user
         val entry = LeaderboardEntry(userEmail, score)
 
-        leaderboardRef.child(userId).setValue(entry)
-            .addOnSuccessListener {
-                // Successfully added or updated entry in Firebase
-            }
-            .addOnFailureListener {
-                // Handle failure if needed
-            }
+//        leaderboardRef.child(userId).setValue(entry)
+//            .addOnSuccessListener {
+//                // Successfully added or updated entry in Firebase
+//            }
+//            .addOnFailureListener {
+//                // Handle failure if needed
+//            }
     }
 
     private fun addOrUpdateLeaderboardScore() {
@@ -434,21 +434,21 @@ class LeaderboardFragment : Fragment() {
 
         val entry = LeaderboardEntry(userEmail, score)
 
-        leaderboardRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (!snapshot.exists()) {
-                    // If the entry doesn't exist, add it
-                    leaderboardRef.child(userId).setValue(entry)
-                } else {
-                    // If the entry exists, update the score
-                    leaderboardRef.child(userId).child("score").setValue(score)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle error if needed
-            }
-        })
+//        leaderboardRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                if (!snapshot.exists()) {
+//                    // If the entry doesn't exist, add it
+//                    leaderboardRef.child(userId).setValue(entry)
+//                } else {
+//                    // If the entry exists, update the score
+//                    leaderboardRef.child(userId).child("score").setValue(score)
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Handle error if needed
+//            }
+//        })
     }
 
     override fun onDestroyView() {
