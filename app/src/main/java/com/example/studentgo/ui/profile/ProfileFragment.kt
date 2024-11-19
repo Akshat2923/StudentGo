@@ -58,7 +58,7 @@ class ProfileFragment : Fragment() {
                 if (success) {
                     Toast.makeText(requireContext(), "Please check your email to confirm", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Inavlid email", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Invalid email", Toast.LENGTH_SHORT).show()
                 }
             }
         }
