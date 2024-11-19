@@ -86,6 +86,9 @@ dependencies {
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     implementation(libs.firebase.database.ktx)
+
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
 }
 
 secrets {

@@ -14,18 +14,11 @@
         android:padding="16dp" />
 
     <Button
-        android:id="@+id/b_add"
+        android:id="@+id/b_publish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Score"
-        android:layout_gravity="center_horizontal" />
-
-    <Button
-        android:id="@+id/b_leaderboard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add To Leaderboard"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:text="Publish To Leaderboard" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

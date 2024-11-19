@@ -78,7 +78,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         mapFragment?.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
         return root
     }
 
