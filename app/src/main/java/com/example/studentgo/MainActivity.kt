@@ -13,12 +13,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import android.util.Log
+import androidx.activity.viewModels
+import com.example.studentgo.ui.map.MapViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+
+    private lateinit var email: String
+    private val mapViewModel: MapViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase Auth
         auth = Firebase.auth
+        mapViewModel.setAuth(auth)
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -46,12 +52,15 @@ class MainActivity : AppCompatActivity() {
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val currentUser = firebaseAuth.currentUser
             if (currentUser == null) {
-                // User is not signed in, redirect to LoginActivity
+                // FirebaseUser is not signed in, redirect to LoginActivity
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish() // Close MainActivity to prevent going back to it
             } else {
-                // User is signed in, navigate to home
-                Log.d("MainActivity", "User is signed in, navigating to home.")
+                // FirebaseUser is signed in
+                currentUser.email?.let {
+                    mapViewModel.setEmail(it)
+                    mapViewModel.getUser(it)
+                }
             }
         }
     }

@@ -23,4 +23,10 @@ class ProfileViewModel : ViewModel() {
             onComplete(task.isSuccessful)
         }
     }
+
+    fun updateUser(newEmail: String, onComplete: (Boolean) -> Unit) {
+        auth.currentUser?.verifyBeforeUpdateEmail(newEmail)?.addOnCompleteListener { task ->
+            onComplete(task.isSuccessful)
+        }
+    }
 }

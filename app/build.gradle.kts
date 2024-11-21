@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.devtools.ksp")
+    id("androidx.room")
 }
 
 android {
@@ -17,6 +19,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        room {
+            schemaDirectory("$projectDir/schemas")
+        }
     }
 
     buildTypes {
@@ -42,7 +48,15 @@ android {
 }
 
 dependencies {
-
+    // Start of Room Dependencies
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.firebase.firestore.ktx)
+    annotationProcessor(libs.room.compiler)
+    // Kotlin Symbol Processing libraries
+    ksp(libs.room.compiler)
+    // This is the KTX dependency needed for coroutines support
+    implementation(libs.androidx.room.ktx)
+    // End of Room Dependencies
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -65,6 +79,16 @@ dependencies {
 
     // Maps SDK for Android
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+
+    // leaderboard
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+
+    implementation ("com.google.android.material:material:1.9.0")
+    implementation ("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+    implementation(libs.firebase.database.ktx)
+
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
 }
 
 secrets {

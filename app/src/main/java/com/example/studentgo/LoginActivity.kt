@@ -15,6 +15,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -26,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val currentUser = firebaseAuth.currentUser
             if (currentUser != null) {
-                // User is signed in, navigate to MainActivity
+                // FirebaseUser is signed in, navigate to MainActivity
                 startActivity(Intent(this, MainActivity::class.java))
                 finish() // Close LoginActivity to prevent going back to it
             }
@@ -51,6 +52,11 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putString("user_email", email) // Replace userEmail with the actual email variable
+                    editor.apply()
+
                     // Sign in success, update UI with the signed-in user's information
                     Toast.makeText(baseContext, "Authentication successful.", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, MainActivity::class.java))
@@ -71,4 +77,5 @@ class LoginActivity : AppCompatActivity() {
         super.onStop()
         auth.removeAuthStateListener(authStateListener) // Remove listener in onStop
     }
+
 }
