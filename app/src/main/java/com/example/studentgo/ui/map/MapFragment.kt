@@ -49,6 +49,7 @@ import kotlin.math.log
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
     GoogleMap.OnMyLocationClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
     private var _binding: FragmentMapBinding? = null
+    private var selectedLocationName: String? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -117,6 +118,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         userModel.score += 1
         Log.d("TEST", "Score: ${userModel.score}")
         mapViewModel.updateUser(userModel)
+
+        visitButton.visibility = View.GONE
+
+        // Display the toast with the location name
+        val locationName = selectedLocationName ?: "Unknown Location"
+        Toast.makeText(requireContext(), "Awesome you got 1 GO Point for placing a marker at $locationName!", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
@@ -223,6 +230,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
                 if (distance < 50.0) {
                     visitButton.visibility = View.VISIBLE
+                    // Store the location name if it matches one in the known locations
+                    knownLocations.forEach { knownLocation ->
+                        if (circle.center.latitude == knownLocation.latitude &&
+                            circle.center.longitude == knownLocation.longitude
+                        ) {
+                            selectedLocationName = knownLocation.name
+                        }
+                    }
                 } else {
                     visitButton.visibility = View.GONE
                 }
