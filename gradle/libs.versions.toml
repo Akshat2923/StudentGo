@@ -11,6 +11,7 @@ material = "1.10.0"
 constraintlayout = "2.1.4"
 lifecycleLivedataKtx = "2.6.1"
 lifecycleViewmodelKtx = "2.6.1"
+materialVersion = "1.9.0"
 navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 lifecycleViewmodelAndroid = "2.8.6"
@@ -20,6 +21,7 @@ playServicesLocation = "21.3.0"
 roomVersion = "2.6.1"
 secretsGradlePlugin = "2.0.1"
 firebaseFirestoreKtx = "25.1.1"
+runtimeAndroid = "1.7.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,10 +42,12 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

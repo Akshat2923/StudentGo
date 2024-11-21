@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="red_1">#FF0000</color>
-    <color name="red_2">#FF0000</color>
-    <color name="red">#FF0000</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Maroon Color -->
+    <color name="maroon">#800000</color>
+
+    <!-- Creme Color -->
+    <color name="creme">#FFF5E1</color>
+
+    <!-- Black for contrast -->
+    <color name="black">#000000</color>
+
+    <!-- White for text on darker backgrounds -->
+    <color name="white">#FFFFFF</color>
 </resources>
