@@ -22,4 +22,17 @@
         android:name="com.example.studentgo.ui.profile.ProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/navigation_popular_locations"
+        android:name="com.example.studentgo.ui.popular.PopularLocationsFragment"
+        android:label="Popular Locations"
+        tools:layout="@layout/fragment_popular_locations">
+        <action
+            android:id="@+id/action_popular_to_map"
+            app:destination="@id/navigation_map"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
 </navigation>

@@ -21,6 +21,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.room.Room
 import com.example.studentgo.R
 import com.example.studentgo.StudentGoApp
@@ -84,6 +86,32 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_search -> {
+                    // Handle search icon press
+                    true
+                }
+                R.id.action_popular -> {
+                    // Navigate to popular locations with animation
+                    findNavController().navigate(
+                        R.id.navigation_popular_locations,
+                        null,
+                        navOptions {
+                            anim {
+                                enter = R.anim.slide_in_right
+                                exit = R.anim.slide_out_left
+                                popEnter = R.anim.slide_in_left
+                                popExit = R.anim.slide_out_right
+                            }
+                        }
+                    )
+                    true
+                }
+                else -> false
+            }
+        }
 
         // Find the button by ID
         visitButton = view.findViewById(R.id.visitButton)

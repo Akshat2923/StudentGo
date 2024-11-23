@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme for Night Mode -->
-    <style name="Theme.StudentGo" parent="Theme.Material3.Dark">
+    <style name="Theme.StudentGo" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Primary brand color for Night Mode -->
         <item name="colorPrimary">@color/maroon</item>
         <item name="colorPrimaryVariant">@color/maroon</item>
