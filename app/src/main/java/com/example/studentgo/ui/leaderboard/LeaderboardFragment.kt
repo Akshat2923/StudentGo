@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studentgo.R
@@ -64,6 +66,36 @@ class LeaderboardFragment : Fragment() {
             }
 
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.topAppBar.setNavigationOnClickListener {
+            // Handle publish to leaderboard
+            fetchUsersScore()
+            addOrUpdateLeaderboardScore()
+        }
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_podium -> {
+                    findNavController().navigate(
+                        R.id.navigation_podium,
+                        null,
+                        navOptions {
+                            anim {
+                                enter = androidx.navigation.ui.R.anim.nav_default_enter_anim
+                                exit = androidx.navigation.ui.R.anim.nav_default_exit_anim
+                                popEnter = androidx.navigation.ui.R.anim.nav_default_pop_enter_anim
+                                popExit = androidx.navigation.ui.R.anim.nav_default_pop_exit_anim
+                            }
+                        }
+                    )
+                    true
+                }
+                else -> false
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -107,11 +139,7 @@ class LeaderboardFragment : Fragment() {
         // Display initial score
         updateScoreDisplay()
 
-        // Publish score button
-        binding.bPublish.setOnClickListener {
-            fetchUsersScore()
-            addOrUpdateLeaderboardScore()
-        }
+
 
         // Periodic update of score in Firestore
         handler.postDelayed(resetRunnable, 10000)

@@ -94,16 +94,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                     true
                 }
                 R.id.action_popular -> {
-                    // Navigate to popular locations with animation
+                    // Navigate to popular locations with default animations
                     findNavController().navigate(
                         R.id.navigation_popular_locations,
                         null,
                         navOptions {
                             anim {
-                                enter = R.anim.slide_in_right
-                                exit = R.anim.slide_out_left
-                                popEnter = R.anim.slide_in_left
-                                popExit = R.anim.slide_out_right
+                                enter = androidx.navigation.ui.R.anim.nav_default_enter_anim
+                                exit = androidx.navigation.ui.R.anim.nav_default_exit_anim
+                                popEnter = androidx.navigation.ui.R.anim.nav_default_pop_enter_anim
+                                popExit = androidx.navigation.ui.R.anim.nav_default_pop_exit_anim
                             }
                         }
                     )
