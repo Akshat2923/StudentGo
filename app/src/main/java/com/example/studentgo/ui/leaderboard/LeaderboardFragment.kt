@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -17,12 +18,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.studentgo.R
 import com.example.studentgo.databinding.FragmentLeaderboardBinding
 import com.example.studentgo.model.LeaderboardEntry
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
 class LeaderboardFragment : Fragment() {
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
 
     private var _binding: FragmentLeaderboardBinding? = null
     private val binding get() = _binding!!
@@ -68,11 +72,22 @@ class LeaderboardFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Initialize bottom sheet
+        val bottomSheet = binding.publishBottomSheet.root
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        binding.topAppBar.setNavigationOnClickListener {
-            // Handle publish to leaderboard
+        // Set up publish button in bottom sheet
+        binding.publishBottomSheet.publishButton.setOnClickListener {
             fetchUsersScore()
             addOrUpdateLeaderboardScore()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            Toast.makeText(requireContext(), "GO Points published to leaderboard!", Toast.LENGTH_SHORT).show()
+        }
+
+        // Update navigation icon click to show bottom sheet
+        binding.topAppBar.setNavigationOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->

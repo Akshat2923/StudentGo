@@ -45,6 +45,7 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.log
 
@@ -59,7 +60,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var visitButton: Button
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
     private val transparentRed = Color.argb(120, 255, 139, 139)
 
@@ -86,6 +87,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Initialize bottom sheet
+        val bottomSheet = binding.bottomSheet.root
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        // Set up visit button in bottom sheet
+        binding.bottomSheet.visitButtonSheet.setOnClickListener {
+            handleVisitButtonClick()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -114,7 +125,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         }
 
         // Find the button by ID
-        visitButton = view.findViewById(R.id.visitButton)
+//        visitButton = view.findViewById(R.id.visitButton)
 
         // Get the application instance to access the database
         val application = requireActivity().application as StudentGoApp
@@ -128,10 +139,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         val userRepository = UserRepository(application, localUserDao, remoteUserDao)
         mapViewModel.initialize(locationRepository, userRepository)
 
-        // Action to be taken when the button is clicked
-        visitButton.setOnClickListener {
-            handleVisitButtonClick()
-        }
+
 
         mapViewModel.user.observe(viewLifecycleOwner) { roomUser ->
             userModel = roomUser
@@ -147,11 +155,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         Log.d("TEST", "Score: ${userModel.score}")
         mapViewModel.updateUser(userModel)
 
-        visitButton.visibility = View.GONE
-
         // Display the toast with the location name
         val locationName = selectedLocationName ?: "Unknown Location"
-        Toast.makeText(requireContext(), "Awesome you got 1 GO Point for placing a marker at $locationName!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Awesome you got 1 GO Point for placing a marker at $locationName!",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onDestroyView() {
@@ -172,7 +182,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
             handleCircleClick(it)
         }
 
-        map.setOnMapClickListener { visitButton.visibility = View.GONE }
+        map.setOnMapClickListener { bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN }
 
         mapViewModel.getKnownLocations()
         mapViewModel.locations.observe(viewLifecycleOwner) { locations ->
@@ -240,6 +250,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     }
 
     private fun handleCircleClick(circle: Circle) {
+        selectedLocationName = circle.tag as? String
+
+        // Update bottom sheet and show it
+        binding.bottomSheet.locationNameText.text = selectedLocationName
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -257,17 +272,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                 val distance = location.distanceTo(circleLocation)
 
                 if (distance < 50.0) {
-                    visitButton.visibility = View.VISIBLE
                     // Store the location name if it matches one in the known locations
                     knownLocations.forEach { knownLocation ->
                         if (circle.center.latitude == knownLocation.latitude &&
                             circle.center.longitude == knownLocation.longitude
                         ) {
                             selectedLocationName = knownLocation.name
+                            binding.bottomSheet.locationNameText.text = selectedLocationName
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         }
                     }
                 } else {
-                    visitButton.visibility = View.GONE
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
         }
