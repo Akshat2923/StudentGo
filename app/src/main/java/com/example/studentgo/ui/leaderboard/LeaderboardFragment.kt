@@ -212,7 +212,7 @@ class LeaderboardFragment : Fragment() {
     }
 
     private fun updateScoreDisplay() {
-        binding.tvScore.text = "SCORE: $score"
+        binding.tvScore.text = "GO Points: $score"
     }
 
 
@@ -287,7 +287,7 @@ class LeaderboardAdapter(private val entries: List<LeaderboardEntry>) : Recycler
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val entry = entries[position]
         holder.userNameTextView.text = entry.userName
-        holder.scoreTextView.text = "Score: ${entry.score}"
+        holder.scoreTextView.text = "GO Points: ${entry.score}"
     }
 
     override fun getItemCount() = entries.size

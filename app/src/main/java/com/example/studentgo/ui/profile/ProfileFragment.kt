@@ -10,12 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.studentgo.LoginActivity
 import com.example.studentgo.MainActivity
+import com.example.studentgo.R
 import com.example.studentgo.databinding.FragmentProfileBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private lateinit var auth: FirebaseAuth
+
 
     private lateinit var profileViewModel: ProfileViewModel
 
@@ -62,6 +67,9 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
+        auth = FirebaseAuth.getInstance()
+        fetchAndDisplayScore()
+        return binding.root
         return binding.root
     }
 
@@ -69,6 +77,24 @@ class ProfileFragment : Fragment() {
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
         requireActivity().finish()
+    }
+
+    private fun fetchAndDisplayScore() {
+        val currentUser = auth.currentUser ?: return
+        val userEmail = currentUser.email ?: return
+
+        FirebaseFirestore.getInstance().collection("users")
+            .document(userEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                val score = document.getLong("score")?.toInt() ?: 0
+                updateScoreDisplay(score)
+            }
+    }
+
+    private fun updateScoreDisplay(score: Int) {
+        val scoreMenuItem = binding.topAppBar.menu.findItem(R.id.action_score)
+        scoreMenuItem.title = "GO Points: $score"
     }
 
     override fun onDestroyView() {
