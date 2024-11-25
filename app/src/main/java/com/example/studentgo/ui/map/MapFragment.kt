@@ -197,6 +197,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         }.addOnFailureListener { e ->
             Log.e("Firestore", "Error fetching user score", e)
         }
+        // Display the toast with the location name
+        val locationName = selectedLocationName ?: "Unknown Location"
+        Toast.makeText(
+            requireContext(),
+            "Awesome you got 1 GO Point for placing a marker at $locationName!",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 
