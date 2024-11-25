@@ -50,12 +50,33 @@ class LeaderboardFragment : Fragment() {
         }
     }
 
-    // Function to update all scores to 0 in Firestore
+//    // Function to update all scores to 0 in Firestore
+//    private fun resetAllLeaderboardScores() {
+//        leaderboardRef.get()
+//            .addOnSuccessListener { querySnapshot ->
+//                for (document in querySnapshot.documents) {
+//                    // Update the score to 0 for each leaderboard entry
+//                    leaderboardRef.document(document.id).update("score", 0)
+//                        .addOnSuccessListener {
+//                            Log.d("Leaderboard", "Score reset for user: ${document.id}")
+//                        }
+//                        .addOnFailureListener { e ->
+//                            Log.e("Leaderboard", "Error resetting score for user: ${document.id}", e)
+//                        }
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("Leaderboard", "Error fetching leaderboard documents", e)
+//            }
+//
+//    }
+
+    // Function to reset all leaderboard and user scores to 0 in Firestore
     private fun resetAllLeaderboardScores() {
         leaderboardRef.get()
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
-                    // Update the score to 0 for each leaderboard entry
+                    // Update the leaderboard entry score to 0
                     leaderboardRef.document(document.id).update("score", 0)
                         .addOnSuccessListener {
                             Log.d("Leaderboard", "Score reset for user: ${document.id}")
@@ -63,13 +84,27 @@ class LeaderboardFragment : Fragment() {
                         .addOnFailureListener { e ->
                             Log.e("Leaderboard", "Error resetting score for user: ${document.id}", e)
                         }
+
+                    // Now reset the corresponding user's score to 0 in the 'users' collection
+                    val userEmail = document.getString("email") // Assuming userName is the email field
+                    if (userEmail != null) {
+                        val usersRef = FirebaseFirestore.getInstance().collection("users")
+                        usersRef.document(userEmail)
+                            .update("score", 0)  // Reset the user's score to 0
+                            .addOnSuccessListener {
+                                Log.d("Leaderboard", "User score reset for: $userEmail")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Leaderboard", "Error resetting user score for: $userEmail", e)
+                            }
+                    }
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("Leaderboard", "Error fetching leaderboard documents", e)
             }
-
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Initialize bottom sheet
