@@ -24,10 +24,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
-                android:background="@android:color/white"
+                android:background="@color/creme"
                 app:navigationIcon="@drawable/ic_arrow_back"
                 app:title="Popular Locations"
-                app:titleTextColor="@android:color/black"
                 app:layout_collapseMode="pin"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -37,6 +36,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView

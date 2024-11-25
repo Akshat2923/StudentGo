@@ -15,6 +15,7 @@ import com.google.firebase.ktx.Firebase
 import android.util.Log
 import androidx.activity.viewModels
 import com.example.studentgo.ui.map.MapViewModel
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        installSplashScreen()
         setContentView(binding.root)
 
         // Initialize Firebase Auth

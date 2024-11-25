@@ -19,6 +19,8 @@
             android:minHeight="?attr/actionBarSize"
             app:title="Map"
             app:menu="@menu/top_app_bar"
+            android:background="@color/creme"
+            app:titleTextColor="@color/dark_green"
             android:theme="@style/ThemeOverlay.Material3" />
     </com.google.android.material.appbar.AppBarLayout>
 

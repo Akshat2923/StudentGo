@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
-                android:background="@android:color/white"
+                android:background="@color/creme"
                 app:navigationIcon="@drawable/ic_add"
                 app:title="Leaderboard"
                 app:titleTextColor="@android:color/black"
@@ -43,6 +43,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/white"
             android:orientation="vertical">
 
             <TextView

@@ -2,18 +2,38 @@
     <!-- Base application theme -->
     <style name="Theme.StudentGo" parent="Theme.Material3.Light.NoActionBar">
         <!-- Primary brand color -->
-        <item name="colorPrimary">@color/maroon</item>
-        <item name="colorPrimaryVariant">@color/maroon</item>
+        <item name="colorPrimary">@color/sage_green</item>
+        <item name="colorPrimaryVariant">@color/dark_green</item>
         <item name="colorOnPrimary">@color/creme</item>
 
         <!-- Secondary brand color -->
-        <item name="colorSecondary">@color/creme</item>
-        <item name="colorSecondaryVariant">@color/maroon</item>
-        <item name="colorOnSecondary">@color/maroon</item>
+        <item name="colorSecondary">@color/light_sage</item>
+        <item name="colorSecondaryVariant">@color/sage_green</item>
+        <item name="colorOnSecondary">@color/creme</item>
 
         <!-- Status bar color -->
-        <item name="android:statusBarColor">@color/design_default_color_background</item>
+        <item name="android:statusBarColor">@color/creme</item>
+        <item name="android:windowLightStatusBar">true</item>
 
-        <!-- Customize other colors as needed -->
+        <!-- Bottom Navigation Colors -->
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+
+        <!-- Additional Material theme attributes -->
+        <item name="colorSurface">@color/creme</item>
+        <item name="colorOnSurface">@color/dark_green</item>
+        <item name="android:windowBackground">@color/creme</item>
+    </style>
+
+    <!-- Bottom Navigation Style -->
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorSurface">@color/dark_green</item>
+        <item name="colorOnSurfaceVariant">@color/sage_green</item>
+    </style>
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/sage_green</item>
     </style>
 </resources>

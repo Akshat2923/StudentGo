@@ -1,13 +1,13 @@
 <resources>
-    <!-- Maroon Color -->
-    <color name="maroon">#800000</color>
+    <!-- Primary Green Color -->
+    <color name="sage_green">#8FBC8F</color>
+    <color name="light_sage">#B5D5B5</color>
 
     <!-- Creme Color -->
-    <color name="creme">#FFF5E1</color>
+    <color name="creme">#FFFAF0</color>
 
-    <!-- Black for contrast -->
+    <!-- Supporting Colors -->
+    <color name="dark_green">#5F8575</color>
     <color name="black">#000000</color>
-
-    <!-- White for text on darker backgrounds -->
     <color name="white">#FFFFFF</color>
 </resources>
