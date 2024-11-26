@@ -11,7 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.studentgo.LoginActivity
 import com.example.studentgo.MainActivity
 import com.example.studentgo.R
+import com.example.studentgo.StudentGoApp
 import com.example.studentgo.databinding.FragmentProfileBinding
+import com.example.studentgo.model.UserRepository
+import com.example.studentgo.model.firestore.FirebaseUserDaoImplementation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -70,7 +73,17 @@ class ProfileFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         fetchAndDisplayScore()
         return binding.root
-        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val application = requireActivity().application as StudentGoApp
+        val localUserDao = application.database.roomUserDao()
+        val remoteUserDao = FirebaseUserDaoImplementation()
+
+        val userRepository = UserRepository(application, localUserDao, remoteUserDao)
+        profileViewModel.setUserRepository(userRepository)
     }
 
     private fun redirectToLogin() {
