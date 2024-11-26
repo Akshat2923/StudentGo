@@ -49,6 +49,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
     GoogleMap.OnMyLocationClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -152,51 +153,52 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
     }
 
     private fun handleVisitButtonClick() {
-        // Get the user's email
-        val email = userModel.email  // Make sure email is set in userModel
-
-        // Reference to Firestore users collection, using email as the document ID
+        val email = userModel.email
         val usersRef = FirebaseFirestore.getInstance().collection("users").document(email)
+        val locationsRef = FirebaseFirestore.getInstance().collection("locations")
 
-        // Fetch the current score from Firestore
+        // Update user score
         usersRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
-                // Retrieve the current score from Firestore
                 val currentScore = document.getLong("score")?.toInt() ?: 0
-
-                // Set the Firestore score to the current score (before incrementing)
                 val updatedScore = currentScore
-
                 userModel.score = updatedScore
 
-                // Now update the Firestore score with the updated value
                 usersRef.update("score", updatedScore)
                     .addOnSuccessListener {
-                        // Once the Firestore score is updated, increment the userModel score
                         userModel.score += 1
-                        Log.d("TEST", "Updated Firestore score: $updatedScore, User score: ${userModel.score}")
-
-                        // Now update the local user model in the ViewModel or Database
                         mapViewModel.updateUser(userModel)
 
-                        // Display the toast with the location name
+                        // Update location visits
                         val locationName = selectedLocationName ?: "Unknown Location"
+                        updateLocationVisits(locationName)
+
                         Toast.makeText(
                             requireContext(),
                             "Awesome you got 1 GO Point for placing a marker at $locationName!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    .addOnFailureListener { e ->
-                        Log.e("Firestore", "Error updating Firestore score", e)
-                    }
-            } else {
-                // Handle the case where the document does not exist (e.g., the user doesn't exist in Firestore)
-                Log.e("Firestore", "User document not found")
             }
-        }.addOnFailureListener { e ->
-            Log.e("Firestore", "Error fetching user score", e)
         }
+    }
+    private fun updateLocationVisits(locationName: String) {
+        val locationsRef = FirebaseFirestore.getInstance().collection("locations")
+
+        locationsRef.document(locationName).get()
+            .addOnSuccessListener { document ->
+                val currentVisits = document.getLong("visits")?.toInt() ?: 0
+                val updatedVisits = currentVisits + 1
+
+                locationsRef.document(locationName)
+                    .set(hashMapOf(
+                        "name" to locationName,
+                        "visits" to updatedVisits
+                    ), SetOptions.merge())
+                    .addOnFailureListener { e ->
+                        Log.e("Firestore", "Error updating location visits", e)
+                    }
+            }
     }
 
 

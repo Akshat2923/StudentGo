@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/navigation_popular_locations"
-        android:name="com.example.studentgo.ui.popular.PopularLocationsFragment"
+        android:name="com.example.studentgo.ui.PopularLocationsFragment"
         android:label="Popular Locations"
         tools:layout="@layout/fragment_popular_locations">
         <action
