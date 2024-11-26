@@ -7,8 +7,7 @@ interface FirebaseUserDao {
 
     suspend fun updateUser(user: FirebaseUser)
 
-    suspend fun deleteUser(user: FirebaseUser)
-    // TODO: the above should run whenever a user deletes their account, which is already happening on firebase
+    suspend fun deleteUser(email: String)
 
     suspend fun getUser(email: String): FirebaseUser?
 
