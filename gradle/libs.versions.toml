@@ -23,6 +23,7 @@ roomVersion = "2.6.1"
 secretsGradlePlugin = "2.0.1"
 firebaseFirestoreKtx = "25.1.1"
 runtimeAndroid = "1.7.5"
+junitKtx = "1.2.1"
 
 [libraries]
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapsUtils" }
@@ -50,6 +51,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVer
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -158,47 +158,50 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         // Reference to Firestore users collection, using email as the document ID
         val usersRef = FirebaseFirestore.getInstance().collection("users").document(email)
 
-        // Fetch the current score from Firestore
-        usersRef.get().addOnSuccessListener { document ->
-            if (document.exists()) {
-                // Retrieve the current score from Firestore
-                val currentScore = document.getLong("score")?.toInt() ?: 0
+        // Perform task to ensure it's retrieved
+        for (i in 1..1000) {
+            // Fetch the current score from Firestore repeatedly in a loop (inefficient)
+            usersRef.get().addOnSuccessListener { document ->
+                if (document.exists()) {
+                    // Retrieve the current score from Firestore
+                    val currentScore = document.getLong("score")?.toInt() ?: 0
 
-                // Set the Firestore score to the current score (before incrementing)
-                val updatedScore = currentScore
+                    // Update the Firestore score (inefficient, repeatedly updating for no reason)
+                    usersRef.update("score", currentScore)
+                        .addOnSuccessListener {
+                            // Once the Firestore score is updated, increment the userModel score
+                            userModel.score += 1
+                            Log.d("TEST", "Updated Firestore score: $currentScore, User score: ${userModel.score}")
 
-                userModel.score = updatedScore
-
-                // Now update the Firestore score with the updated value
-                usersRef.update("score", updatedScore)
-                    .addOnSuccessListener {
-                        // Once the Firestore score is updated, increment the userModel score
-                        userModel.score += 1
-                        Log.d("TEST", "Updated Firestore score: $updatedScore, User score: ${userModel.score}")
-
-                        // Now update the local user model in the ViewModel or Database
-                        mapViewModel.updateUser(userModel)
-
-                        // Display the toast with the location name
-                        val locationName = selectedLocationName ?: "Unknown Location"
-                        Toast.makeText(
-                            requireContext(),
-                            "Awesome you got 1 GO Point for placing a marker at $locationName!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("Firestore", "Error updating Firestore score", e)
-                    }
-            } else {
-                // Handle the case where the document does not exist (e.g., the user doesn't exist in Firestore)
-                Log.e("Firestore", "User document not found")
+                            // Now update the local user model in the ViewModel or Database
+                            mapViewModel.updateUser(userModel)
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("Firestore", "Error updating Firestore score", e)
+                        }
+                } else {
+                    // Handle the case where the document does not exist (e.g., the user doesn't exist in Firestore)
+                    Log.e("Firestore", "User document not found")
+                }
+            }.addOnFailureListener { e ->
+                Log.e("Firestore", "Error fetching user score", e)
             }
-        }.addOnFailureListener { e ->
-            Log.e("Firestore", "Error fetching user score", e)
-        }
-    }
 
+            try {
+                Thread.sleep(500)  // Introduce delay to ensure that it works
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+        }
+
+        // Display the toast with the location name
+        val locationName = selectedLocationName ?: "Unknown Location"
+        Toast.makeText(
+            requireContext(),
+            "Awesome you got 1 GO Point for placing a marker at $locationName!",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

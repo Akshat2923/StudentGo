@@ -164,6 +164,7 @@ class LeaderboardFragment : Fragment() {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = leaderboardAdapter
+            isNestedScrollingEnabled = true // Add this line here
         }
 
         // Fetch initial score from Firestore

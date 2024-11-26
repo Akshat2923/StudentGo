@@ -24,50 +24,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
-                android:background="@color/creme"
-                app:navigationIcon="@drawable/ic_add"
-                app:title="Leaderboard"
+                android:background="@android:color/white"
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:title="Top 3"
                 app:titleTextColor="@android:color/black"
-                app:menu="@menu/leaderboard_menu"
                 app:layout_collapseMode="pin"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:scrollbars="vertical"> <!-- Enables vertical scroll bar -->
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/podiumContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="GO Point Total: 0"
-                android:textSize="18sp"
-                android:layout_gravity="center_horizontal"
-                android:padding="16dp" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp" />
-
-        </LinearLayout>
+            android:orientation="vertical"
+            android:padding="16dp"/>
 
     </androidx.core.widget.NestedScrollView>
-    <include
-        android:id="@+id/publishBottomSheet"
-        layout="@layout/bottom_sheet_publish_score"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

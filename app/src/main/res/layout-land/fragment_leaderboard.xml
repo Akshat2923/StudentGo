@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
-                android:background="@color/creme"
+                android:background="@android:color/white"
                 app:navigationIcon="@drawable/ic_add"
                 app:title="Leaderboard"
                 app:titleTextColor="@android:color/black"
@@ -44,7 +44,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
             android:orientation="vertical">
 
             <TextView
@@ -60,8 +59,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:scrollbars="vertical" />
 
         </LinearLayout>
 

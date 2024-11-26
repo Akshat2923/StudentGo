@@ -25,6 +25,13 @@ android {
         }
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+            }
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -56,6 +63,7 @@ dependencies {
     // Start of Room Dependencies
     implementation(libs.androidx.room.runtime)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.junit.ktx)
     annotationProcessor(libs.room.compiler)
     // Kotlin Symbol Processing libraries
     ksp(libs.room.compiler)
@@ -99,6 +107,62 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+
+    // AndroidX Test Core library
+    testImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.test:core:1.5.0")
+
+    // AndroidX Test Rules library
+    testImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+
+    // AndroidX Test Runner library
+    testImplementation("androidx.test:runner:1.5.0")
+    androidTestImplementation("androidx.test:runner:1.5.0")
+
+    // AndroidX Fragment Testing library
+    debugImplementation("androidx.fragment:fragment-testing:1.6.1")
+
+    // Mockito for mocking
+    testImplementation("org.mockito:mockito-core:4.11.0")
+    testImplementation("org.mockito:mockito-inline:4.11.0")
+
+    // Mockito
+
+    // Byte Buddy (if explicitly needed)
+    testImplementation("net.bytebuddy:byte-buddy:1.14.10")
+    testImplementation("net.bytebuddy:byte-buddy-agent:1.14.10")
+
+
+    // Mockito Android support
+    androidTestImplementation("org.mockito:mockito-android:4.11.0")
+
+    // JUnit
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("junit:junit:4.13.2")
+
+    // Arch Core Testing
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    // Robolectric
+    testImplementation("org.robolectric:robolectric:4.11.1")
+
+    // Kotlin test
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.8.20")
+
+    // Firebase dependencies for testing
+    testImplementation("com.google.firebase:firebase-auth:22.1.1")
+    testImplementation("com.google.firebase:firebase-firestore:24.7.0")
+
+    // Remove duplicate dependencies
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.5.0")
+    androidTestImplementation("androidx.test.runner:1.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    // Robolectric and other test libraries
+    testImplementation("org.robolectric:robolectric:4.10.3")
+    testImplementation("androidx.test:core:1.5.0")
 }
 
 secrets {
