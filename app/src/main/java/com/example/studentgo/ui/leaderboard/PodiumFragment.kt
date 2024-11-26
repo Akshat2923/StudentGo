@@ -24,6 +24,7 @@ class PodiumFragment : Fragment() {
         _binding = FragmentPodiumBinding.inflate(inflater, container, false)
         
         fetchTop3Users()
+        fetchLeaderboardStats()
         
         binding.topAppBar.setNavigationOnClickListener {
             findNavController().navigateUp()
