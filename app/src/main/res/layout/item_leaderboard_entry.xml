@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/userNameTextView"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="User Name"
-        android:textSize="16sp" />
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/scoreTextView"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_profile_black_24dp"
+            app:tint="@color/black"
+            android:layout_marginEnd="16dp"/>
+
+        <TextView
+            android:id="@+id/userNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="User Name"
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 100"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Score: 100"
-        android:textSize="16sp" />
+        app:dividerInsetStart="56dp"
+        app:dividerInsetEnd="16dp"
+        app:dividerColor="@color/light_sage"
+        app:dividerThickness="1dp"/>
+
 </LinearLayout>

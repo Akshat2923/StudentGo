@@ -6,6 +6,7 @@
     android:background="@color/white"
     android:layout_height="match_parent">
 
+    <!-- Keep existing AppBarLayout -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +37,6 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -45,6 +45,16 @@
             android:orientation="vertical"
             android:padding="24dp">
 
+            <!-- Profile Icon -->
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/ic_profile_black_24dp"
+                app:tint="@color/sage_green"/>
+
+            <!-- User Info Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,15 +68,22 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Account Information"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
+                        android:textColor="@color/dark_green"
+                        android:layout_marginBottom="16dp"/>
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/emailTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="User Info"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="16dp"
-                        android:textColor="@color/black"/>
+                        android:drawableStart="@drawable/ic_update"
+                        android:drawablePadding="8dp"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:layout_marginBottom="16dp"/>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -77,7 +94,8 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/emailEditText"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.button.MaterialButton
@@ -86,26 +104,57 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:padding="12dp"
-                        android:text="Update Email"/>
+                        style="@style/Widget.Material3.Button.ElevatedButton"
+                        android:text="Update Email"
+                        android:backgroundTint="@color/sage_green"
+                        android:textColor="@color/creme"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/logoutButton"
+            <!-- Account Actions Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:padding="12dp"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:text="Sign Out"/>
+                app:cardElevation="2dp"
+                app:cardCornerRadius="12dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/deleteButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:text="Delete Account"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Account Actions"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
+                        android:textColor="@color/dark_green"
+                        android:layout_marginBottom="16dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/logoutButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:padding="12dp"
+                        style="@style/Widget.Material3.Button.ElevatedButton"
+                        android:backgroundTint="@color/dark_green"
+                        android:textColor="@color/creme"
+                        android:text="Sign Out"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/deleteButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:textColor="@android:color/holo_red_dark"
+                        app:strokeColor="@android:color/holo_red_dark"
+                        android:text="Delete Account"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView></androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
