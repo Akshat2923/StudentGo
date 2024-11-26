@@ -37,7 +37,7 @@ class MainActivityUITest {
 
         onView(withId(R.id.action_popular))
             .perform(click())
-        
+
         Thread.sleep(3000)
     }
 
