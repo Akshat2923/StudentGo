@@ -102,10 +102,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.action_search -> {
-                    // Handle search icon press
-                    true
-                }
+                
                 R.id.action_popular -> {
                     // Navigate to popular locations with default animations
                     findNavController().navigate(

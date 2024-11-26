@@ -14,6 +14,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import com.example.studentgo.ui.map.MapViewModel
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Add these lines before setContentView
+        window.statusBarColor = ContextCompat.getColor(this, R.color.creme)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.creme)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         installSplashScreen()

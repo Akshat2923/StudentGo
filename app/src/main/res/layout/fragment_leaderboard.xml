@@ -89,8 +89,6 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <include
-        android:id="@+id/publishBottomSheet"
-        layout="@layout/bottom_sheet_publish_score"/>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

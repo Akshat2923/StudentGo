@@ -1,5 +1,6 @@
 package com.example.studentgo.ui.leaderboard
 
+import PublishScoreBottomSheet
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -25,8 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
 class LeaderboardFragment : Fragment() {
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
-
 
     private var _binding: FragmentLeaderboardBinding? = null
     private val binding get() = _binding!!
@@ -108,22 +107,18 @@ class LeaderboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Initialize bottom sheet
-        val bottomSheet = binding.publishBottomSheet.root
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        // Set up publish button in bottom sheet
-        binding.publishBottomSheet.publishButton.setOnClickListener {
-            fetchUsersScore()
-            addOrUpdateLeaderboardScore()
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            Toast.makeText(requireContext(), "GO Points published to leaderboard!", Toast.LENGTH_SHORT).show()
-        }
-
-        // Update navigation icon click to show bottom sheet
         binding.topAppBar.setNavigationOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            val publishScoreBottomSheet = PublishScoreBottomSheet().apply {
+                onPublishClick = {
+                    fetchUsersScore()
+                    addOrUpdateLeaderboardScore()
+                    Toast.makeText(requireContext(), "GO Points published to leaderboard!", Toast.LENGTH_SHORT).show()
+                }
+            }
+            publishScoreBottomSheet.show(childFragmentManager, PublishScoreBottomSheet.TAG)
         }
+
+
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
