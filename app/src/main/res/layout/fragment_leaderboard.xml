@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,24 +11,24 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            style="?attr/collapsingToolbarLayoutMediumStyle"
             android:layout_width="match_parent"
             android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
-            style="?attr/collapsingToolbarLayoutMediumStyle"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:contentScrim="@android:color/white"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:statusBarScrim="@android:color/white">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:elevation="0dp"
                 android:background="@color/creme"
+                android:elevation="0dp"
+                app:layout_collapseMode="pin"
+                app:menu="@menu/leaderboard_menu"
                 app:navigationIcon="@drawable/ic_add"
                 app:title="Leaderboard"
-                app:titleTextColor="@android:color/black"
-                app:menu="@menu/leaderboard_menu"
-                app:layout_collapseMode="pin"/>
+                app:titleTextColor="@android:color/black" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -50,31 +49,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="12dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Your GO Points"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/dark_green"/>
+                        android:textColor="@color/dark_green" />
 
                     <TextView
                         android:id="@+id/tv_score"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:text="0"
                         android:textAppearance="?attr/textAppearanceHeadlineLarge"
-                        android:textColor="@color/sage_green"
-                        android:layout_marginTop="8dp"/>
+                        android:textColor="@color/sage_green" />
+
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -83,12 +84,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
-                android:paddingBottom="16dp"/>
+                android:paddingBottom="16dp" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
