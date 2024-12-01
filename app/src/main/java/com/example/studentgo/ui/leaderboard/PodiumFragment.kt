@@ -71,10 +71,10 @@ class PodiumFragment : Fragment() {
         .get()
         .addOnSuccessListener { documents ->
             val totalParticipants = documents.size()
-            val highestScore = documents.maxOf { it.toObject(LeaderboardEntry::class.java).score }
-            
+            val totalScore = documents.sumOf { it.toObject(LeaderboardEntry::class.java).score }
+
             binding.totalParticipants.text = totalParticipants.toString()
-            binding.highestScore.text = highestScore.toString()
+            binding.totalScore.text = totalScore.toString()
         }
-}
+    }
 }
