@@ -34,10 +34,10 @@
     </style>
 
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
-        <item name="colorSurface">@color/dark_green</item>
+        <item name="colorSurface">@color/light_sage</item>
         <item name="colorOnSurfaceVariant">@color/sage_green</item>
     </style>
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/sage_green</item>
+        <item name="android:color">@color/light_sage</item>
     </style>
 </resources>
