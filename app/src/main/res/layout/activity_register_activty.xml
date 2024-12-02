@@ -5,7 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
+    app:layout_constraintTop_toBottomOf="@+id/welcomeText"
     tools:context=".RegisterActivity">
+    <TextView
+        android:id="@+id/welcomeHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome to StudentGO"
+        android:textAlignment="center"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        android:textColor="@color/dark_green"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/welcomeText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Explore campus, earn points, and compete with peers!"
+        android:textAlignment="center"
+        android:textColor="@color/sage_green"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/logoCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welcomeHeader"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/logoCard"
