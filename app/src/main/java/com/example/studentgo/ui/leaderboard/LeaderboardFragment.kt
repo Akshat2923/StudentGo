@@ -26,6 +26,7 @@ import com.example.studentgo.R
 import com.example.studentgo.databinding.FragmentLeaderboardBinding
 import com.example.studentgo.model.LeaderboardEntry
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,7 +35,7 @@ import com.google.firebase.firestore.Query
 class LeaderboardFragment : Fragment() {
 
     companion object {
-        private const val RESET_INTERVAL_MS = 3600000L //for ui timer
+        private const val RESET_INTERVAL_MS = 604800000L //for ui timer
     }
 
     private var _binding: FragmentLeaderboardBinding? = null
@@ -47,6 +48,12 @@ class LeaderboardFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var animator: ValueAnimator? = null
     private val handler = Handler(Looper.getMainLooper())
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ true)
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

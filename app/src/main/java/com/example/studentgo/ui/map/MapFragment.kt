@@ -46,9 +46,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
@@ -71,6 +73,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
 
     private lateinit var userModel: RoomUser
     private lateinit var email: String
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ true)
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,6 +127,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                     )
                     true
                 }
+
                 else -> false
             }
         }
@@ -134,7 +143,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         val remoteUserDao = FirebaseUserDaoImplementation()
 
         // Create the repository and pass it to the ViewModel
-        val locationRepository = KnownLocationRepository(application, localLocationDao, remoteLocationDao)
+        val locationRepository =
+            KnownLocationRepository(application, localLocationDao, remoteLocationDao)
         val userRepository = UserRepository(application, localUserDao, remoteUserDao)
         mapViewModel.initialize(locationRepository, userRepository)
 
@@ -154,31 +164,47 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
         val usersRef = FirebaseFirestore.getInstance().collection("users").document(email)
         val locationsRef = FirebaseFirestore.getInstance().collection("locations")
 
-        // Update user score
-        usersRef.get().addOnSuccessListener { document ->
-            if (document.exists()) {
-                val currentScore = document.getLong("score")?.toInt() ?: 0
-                val updatedScore = currentScore
-                userModel.score = updatedScore
+        // First fetch top 3 locations to determine point value
+        locationsRef.orderBy("visits", Query.Direction.DESCENDING)
+            .limit(3)
+            .get()
+            .addOnSuccessListener { documents ->
+                val top3Locations = documents.map { it.getString("name") ?: "" }
+                val locationName = selectedLocationName ?: "Unknown Location"
 
-                usersRef.update("score", updatedScore)
-                    .addOnSuccessListener {
-                        userModel.score += 1
-                        mapViewModel.updateUser(userModel)
+                // Calculate points based on location ranking
+                val points = when (locationName) {
+                    top3Locations.getOrNull(0) -> 3  // First place: 3 points
+                    top3Locations.getOrNull(1) -> 2  // Second place: 2 points
+                    top3Locations.getOrNull(2) -> 1  // Third place: 1 point
+                    else -> 1  // Regular location: 1 point
+                }
 
-                        // Update location visits
-                        val locationName = selectedLocationName ?: "Unknown Location"
-                        updateLocationVisits(locationName)
+                // Update user score
+                usersRef.get().addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val currentScore = document.getLong("score")?.toInt() ?: 0
+                        val updatedScore = currentScore + points
 
-                        Toast.makeText(
-                            requireContext(),
-                            "Awesome you got 1 GO Point for placing a marker at $locationName!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        usersRef.update("score", updatedScore)
+                            .addOnSuccessListener {
+                                userModel.score = updatedScore
+                                mapViewModel.updateUser(userModel)
+
+                                // Update location visits
+                                updateLocationVisits(locationName)
+
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Awesome! You got $points GO ${if (points == 1) "Point" else "Points"} for visiting $locationName!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                     }
+                }
             }
-        }
     }
+
     private fun updateLocationVisits(locationName: String) {
         val locationsRef = FirebaseFirestore.getInstance().collection("locations")
 
@@ -188,10 +214,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButton
                 val updatedVisits = currentVisits + 1
 
                 locationsRef.document(locationName)
-                    .set(hashMapOf(
-                        "name" to locationName,
-                        "visits" to updatedVisits
-                    ), SetOptions.merge())
+                    .set(
+                        hashMapOf(
+                            "name" to locationName,
+                            "visits" to updatedVisits
+                        ), SetOptions.merge()
+                    )
                     .addOnFailureListener { e ->
                         Log.e("Firestore", "Error updating location visits", e)
                     }

@@ -40,5 +40,13 @@
         android:id="@+id/navigation_podium"
         android:name="com.example.studentgo.ui.podium.PodiumFragment"
         android:label="Top 3"
-        tools:layout="@layout/fragment_podium" />
+        tools:layout="@layout/fragment_podium">
+        <action
+            android:id="@+id/action_popular_to_map"
+            app:destination="@id/navigation_leaderboard"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 </navigation>

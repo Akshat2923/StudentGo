@@ -15,6 +15,7 @@ import com.example.studentgo.StudentGoApp
 import com.example.studentgo.databinding.FragmentProfileBinding
 import com.example.studentgo.model.UserRepository
 import com.example.studentgo.model.firestore.FirebaseUserDaoImplementation
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -26,6 +27,7 @@ class ProfileFragment : Fragment() {
 
 
     private lateinit var profileViewModel: ProfileViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

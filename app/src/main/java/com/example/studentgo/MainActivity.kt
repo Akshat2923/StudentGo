@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Window
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -19,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.android.material.transition.platform.MaterialFadeThrough  // Add this import
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,12 +36,19 @@ class MainActivity : AppCompatActivity() {
     private val resetRunnable = object : Runnable {
         override fun run() {
             resetAllScores()
-            handler.postDelayed(this, 3600000) // Reset every hour
+            handler.postDelayed(this, 604800000L) // Reset every hour
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Enable window content transitions
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+
+        // Setup default transitions for the whole activity
+        window.enterTransition = MaterialFadeThrough()
+        window.exitTransition = MaterialFadeThrough()
         window.statusBarColor = ContextCompat.getColor(this, R.color.creme)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.creme)
 
