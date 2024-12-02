@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -269,15 +270,25 @@ class LeaderboardAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val entry = entries[position]
+        val entry = entries[position]  // Use entries list directly instead of getItem
         holder.userNameTextView.text = entry.userName
         holder.scoreTextView.text = "GO Points: ${entry.score}"
 
-        // Highlight current user's entry
+        // Handle current user highlighting
         if (entry.userName == currentUserEmail) {
-            holder.container.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.light_sage))
+            // Current user - use accent color
+            holder.userNameTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.sage_green))
+            holder.container.findViewById<ImageView>(R.id.profileIcon)?.setColorFilter(
+                ContextCompat.getColor(holder.itemView.context, R.color.sage_green)
+            )
+            holder.scoreTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.sage_green))
+
         } else {
-            holder.container.setBackgroundColor(Color.TRANSPARENT)
+            // Other users - use default colors
+            holder.userNameTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+            holder.container.findViewById<ImageView>(R.id.profileIcon)?.setColorFilter(
+                ContextCompat.getColor(holder.itemView.context, R.color.black)
+            )
         }
     }
 
