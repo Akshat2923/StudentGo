@@ -57,4 +57,12 @@ class UserRepository (
         localDao.insertUser(user)
         remoteDao.insertUser(remoteDao.convertToRemoteModel(user))
     }
+
+    suspend fun deleteUserFromFirebaseCollection(email: String?) {
+        if (email != null) {
+            remoteDao.deleteUser(email)
+        } else {
+            Log.d("TEST", "No email found in deleteUserFromFirebaseCollection()")
+        }
+    }
 }

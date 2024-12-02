@@ -1,5 +1,4 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,22 +11,22 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            style="?attr/collapsingToolbarLayoutMediumStyle"
             android:layout_width="match_parent"
             android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
-            style="?attr/collapsingToolbarLayoutMediumStyle"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:contentScrim="@android:color/white"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:statusBarScrim="@android:color/white">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:elevation="0dp"
                 android:background="@color/creme"
+                android:elevation="0dp"
+                app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_arrow_back"
-                app:title="Popular Locations"
-                app:layout_collapseMode="pin"/>
+                app:title="Popular Locations" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -66,10 +65,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="📍 Discover the most visited places on campus"
+                        android:text="📍 Get more GO Points for visiting popular locations!"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                        android:textColor="@color/dark_green"/>
+                        android:textColor="@color/dark_green" />
 
 
                 </LinearLayout>
@@ -82,8 +81,8 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:strokeWidth="2dp"
-                app:strokeColor="@color/sage_green">
+                app:strokeColor="@color/sage_green"
+                app:strokeWidth="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -93,9 +92,9 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
+                        android:background="@color/light_sage"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_popular"
-                        android:background="@color/light_sage"/>
+                        android:src="@drawable/ic_popular" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -107,7 +106,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Most Visited"
-                            app:chipIcon="@drawable/ic_popular"/>
+                            app:chipIcon="@drawable/ic_popular" />
 
                         <TextView
                             android:id="@+id/firstPlaceLocation"
@@ -115,15 +114,31 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:textAppearance="?attr/textAppearanceTitleLarge"
-                            android:textColor="@color/dark_green"/>
+                            android:textColor="@color/dark_green" />
 
-                        <TextView
-                            android:id="@+id/firstPlaceVisits"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:textAppearance="?attr/textAppearanceBodyLarge"
-                            android:textColor="@color/sage_green"/>
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/firstPlaceVisits"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textColor="@color/sage_green" />
+
+                            <TextView
+                                android:id="@+id/firstPlacePoints"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_points"
+                                android:drawablePadding="4dp"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textColor="@color/sage_green" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -132,10 +147,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Other Popular Spots"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="@color/dark_green"
-                android:layout_marginBottom="8dp"/>
+                android:textColor="@color/dark_green" />
 
             <!-- Second Place -->
             <com.google.android.material.card.MaterialCardView
@@ -161,21 +176,38 @@
                             android:id="@+id/secondPlaceLocation"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceTitleMedium"/>
+                            android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-                        <TextView
-                            android:id="@+id/secondPlaceVisits"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceBodyMedium"
-                            android:textColor="@color/sage_green"/>
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/secondPlaceVisits"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textColor="@color/sage_green" />
+
+                            <TextView
+                                android:id="@+id/secondPlacePoints"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_points"
+                                android:drawablePadding="4dp"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textColor="@color/sage_green" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Assist"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2nd"
-                        style="@style/Widget.Material3.Chip.Assist"/>
+                        android:text="2nd" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -203,21 +235,38 @@
                             android:id="@+id/thirdPlaceLocation"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceTitleMedium"/>
+                            android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-                        <TextView
-                            android:id="@+id/thirdPlaceVisits"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceBodyMedium"
-                            android:textColor="@color/sage_green"/>
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/thirdPlaceVisits"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textColor="@color/sage_green" />
+
+                            <TextView
+                                android:id="@+id/thirdPlacePoints"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_points"
+                                android:drawablePadding="4dp"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textColor="@color/sage_green" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Assist"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3rd"
-                        style="@style/Widget.Material3.Chip.Assist"/>
+                        android:text="3rd" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -246,14 +295,14 @@
                             android:layout_margin="8dp"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="0dp"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="@color/light_sage">
+                            app:strokeColor="@color/light_sage"
+                            app:strokeWidth="1dp">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
                                 android:gravity="center"
+                                android:orientation="vertical"
                                 android:padding="16dp">
 
                                 <TextView
@@ -261,13 +310,13 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                                    android:textColor="@color/sage_green"/>
+                                    android:textColor="@color/sage_green" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Total Visits"
-                                    android:textAppearance="?attr/textAppearanceBodySmall"/>
+                                    android:textAppearance="?attr/textAppearanceBodySmall" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
@@ -284,14 +333,14 @@
                             android:layout_margin="8dp"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="0dp"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="@color/light_sage">
+                            app:strokeColor="@color/light_sage"
+                            app:strokeWidth="1dp">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
                                 android:gravity="center"
+                                android:orientation="vertical"
                                 android:padding="16dp">
 
                                 <TextView
@@ -299,13 +348,13 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                                    android:textColor="@color/sage_green"/>
+                                    android:textColor="@color/sage_green" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Locations"
-                                    android:textAppearance="?attr/textAppearanceBodySmall"/>
+                                    android:textAppearance="?attr/textAppearanceBodySmall" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>

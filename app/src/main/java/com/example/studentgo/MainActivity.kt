@@ -2,34 +2,53 @@ package com.example.studentgo
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.Window
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.studentgo.databinding.ActivityMainBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.example.studentgo.ui.map.MapViewModel
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.studentgo.databinding.ActivityMainBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.android.material.transition.platform.MaterialFadeThrough  // Add this import
+
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
-
+    private val handler = Handler(Looper.getMainLooper())
     private lateinit var email: String
     private val mapViewModel: MapViewModel by viewModels()
 
+    private val resetRunnable = object : Runnable {
+        override fun run() {
+            resetAllScores()
+            handler.postDelayed(this, 604800000L) // Reset every hour
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Add these lines before setContentView
+
+        // Enable window content transitions
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+
+        // Setup default transitions for the whole activity
+        window.enterTransition = MaterialFadeThrough()
+        window.exitTransition = MaterialFadeThrough()
         window.statusBarColor = ContextCompat.getColor(this, R.color.creme)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.creme)
 
@@ -37,15 +56,12 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         setContentView(binding.root)
 
-        // Initialize Firebase Auth
         auth = Firebase.auth
         mapViewModel.setAuth(auth)
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_map, R.id.navigation_leaderboard, R.id.navigation_profile
@@ -53,30 +69,67 @@ class MainActivity : AppCompatActivity() {
         )
         navView.setupWithNavController(navController)
 
-        // Set up AuthStateListener
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val currentUser = firebaseAuth.currentUser
             if (currentUser == null) {
-                // FirebaseUser is not signed in, redirect to LoginActivity
                 startActivity(Intent(this, LoginActivity::class.java))
-                finish() // Close MainActivity to prevent going back to it
+                finish()
             } else {
-                // FirebaseUser is signed in
                 currentUser.email?.let {
                     mapViewModel.setEmail(it)
                     mapViewModel.getUser(it)
                 }
             }
         }
+
+        // Start the reset timer
+        handler.post(resetRunnable)
+    }
+
+    private fun resetAllScores() {
+        val firestore = FirebaseFirestore.getInstance()
+        val leaderboardRef = firestore.collection("leaderboard")
+        val usersRef = firestore.collection("users")
+
+        // Reset leaderboard scores
+        leaderboardRef.get().addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot.documents) {
+                leaderboardRef.document(document.id).update("score", 0)
+                    .addOnSuccessListener {
+                        Log.d("Leaderboard", "Score reset for user: ${document.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Leaderboard", "Error resetting score for user: ${document.id}", e)
+                    }
+            }
+        }
+
+        // Reset user scores
+        usersRef.get().addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot.documents) {
+                usersRef.document(document.id).update("score", 0)
+                    .addOnSuccessListener {
+                        Log.d("Users", "Score reset for user: ${document.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Users", "Error resetting score for user: ${document.id}", e)
+                    }
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        auth.addAuthStateListener(authStateListener) // Add listener in onStart
+        auth.addAuthStateListener(authStateListener)
     }
 
     override fun onStop() {
         super.onStop()
-        auth.removeAuthStateListener(authStateListener) // Remove listener in onStop
+        auth.removeAuthStateListener(authStateListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(resetRunnable)
     }
 }

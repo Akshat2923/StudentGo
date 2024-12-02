@@ -20,8 +20,8 @@ class FirebaseUserDaoImplementation: FirebaseUserDao {
         firestore.collection("users").document(user.email).set(x)
     }
 
-    override suspend fun deleteUser(user: FirebaseUser) {
-        firestore.collection("users").document(user.email).delete()
+    override suspend fun deleteUser(email: String) {
+        firestore.collection("users").document(email).delete()
     }
 
     override suspend fun updateUser(user: FirebaseUser) {

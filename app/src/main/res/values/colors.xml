@@ -1,13 +1,14 @@
+<!-- names are green bc i hardcoded names in the app -->
 <resources>
-    <!-- Primary Green Color -->
-    <color name="sage_green">#8FBC8F</color>
-    <color name="light_sage">#B5D5B5</color>
+    <!-- Primary Colors -->
+    <color name="sage_green">#0277BD</color>         <!-- Ocean Blue -->
+    <color name="light_sage">#4FC3F7</color>         <!-- Sky Blue -->
+    <color name="dark_green">#01579B</color>         <!-- Deep Blue -->
 
-    <!-- Creme Color -->
-    <color name="creme">#FFFAF0</color>
+    <!-- Creme Colors -->
+    <color name="creme">#FAFAFA</color>             <!-- Cool White -->
 
     <!-- Supporting Colors -->
-    <color name="dark_green">#5F8575</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 </resources>

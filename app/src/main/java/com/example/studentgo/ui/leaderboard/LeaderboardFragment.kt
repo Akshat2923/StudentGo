@@ -1,7 +1,9 @@
 package com.example.studentgo.ui.leaderboard
 
 import PublishScoreBottomSheet
+import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,8 +11,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.animation.addListener
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -19,7 +26,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.studentgo.R
 import com.example.studentgo.databinding.FragmentLeaderboardBinding
 import com.example.studentgo.model.LeaderboardEntry
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,98 +35,142 @@ import com.google.firebase.firestore.Query
 
 class LeaderboardFragment : Fragment() {
 
+    companion object {
+        private const val RESET_INTERVAL_MS = 604800000L //for ui timer
+    }
+
     private var _binding: FragmentLeaderboardBinding? = null
     private val binding get() = _binding!!
 
     private var score = 0
     private val leaderboardEntries = mutableListOf<LeaderboardEntry>()
     private lateinit var leaderboardAdapter: LeaderboardAdapter
-    private val handler = Handler(Looper.getMainLooper())
-
     private lateinit var leaderboardRef: CollectionReference
     private lateinit var auth: FirebaseAuth
+    private var animator: ValueAnimator? = null
+    private val handler = Handler(Looper.getMainLooper())
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    private val resetRunnable = object : Runnable {
-        override fun run() {
-            resetAllLeaderboardScores() // Add or update the score in Firestore
-            fetchLeaderboardScore()
-            updateScoreDisplay()
-            addOrUpdateUsersScore()
-            handler.postDelayed(this, 10000) // Repeat every 10 seconds
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ true)
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ false)
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentLeaderboardBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        auth = FirebaseAuth.getInstance()
+        val firestore = FirebaseFirestore.getInstance()
+        leaderboardRef = firestore.collection("leaderboard")
+
+        val sharedPreferences = requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        val userEmail = sharedPreferences.getString("user_email", "Unknown User") ?: "Unknown User"
+
+        leaderboardAdapter = LeaderboardAdapter(leaderboardEntries, userEmail)
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = leaderboardAdapter
+        }
+
+        fetchUsersScore()
+        startResetProgressAnimation()
+
+        // Set up leaderboard listener
+        leaderboardRef.orderBy("score", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) return@addSnapshotListener
+                if (snapshot != null) {
+                    leaderboardEntries.clear()
+                    for (doc in snapshot.documents) {
+                        val entry = doc.toObject(LeaderboardEntry::class.java)
+                        entry?.let { leaderboardEntries.add(it) }
+                    }
+                    leaderboardAdapter.notifyDataSetChanged()
+                }
+            }
+
+        return root
+    }
+
+    private fun formatTimeRemaining(timeInMillis: Long): String {
+        val seconds = (timeInMillis / 1000) % 60
+        val minutes = (timeInMillis / (1000 * 60)) % 60
+        val hours = (timeInMillis / (1000 * 60 * 60)) % 24
+        val days = timeInMillis / (1000 * 60 * 60 * 24)
+
+        return when {
+            days > 0 -> "${days}d ${hours}h"
+            hours > 0 -> "${hours}h ${minutes}m"
+            minutes > 0 -> "${minutes}m ${seconds}s"
+            else -> "${seconds}s"
         }
     }
 
-//    // Function to update all scores to 0 in Firestore
-//    private fun resetAllLeaderboardScores() {
-//        leaderboardRef.get()
-//            .addOnSuccessListener { querySnapshot ->
-//                for (document in querySnapshot.documents) {
-//                    // Update the score to 0 for each leaderboard entry
-//                    leaderboardRef.document(document.id).update("score", 0)
-//                        .addOnSuccessListener {
-//                            Log.d("Leaderboard", "Score reset for user: ${document.id}")
-//                        }
-//                        .addOnFailureListener { e ->
-//                            Log.e("Leaderboard", "Error resetting score for user: ${document.id}", e)
-//                        }
-//                }
-//            }
-//            .addOnFailureListener { e ->
-//                Log.e("Leaderboard", "Error fetching leaderboard documents", e)
-//            }
-//
-//    }
+    private fun startResetProgressAnimation() {
+        if (_binding == null) return
 
-    // Function to reset all leaderboard and user scores to 0 in Firestore
-    private fun resetAllLeaderboardScores() {
-        leaderboardRef.get()
-            .addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot.documents) {
-                    // Update the leaderboard entry score to 0
-                    leaderboardRef.document(document.id).update("score", 0)
-                        .addOnSuccessListener {
-                            Log.d("Leaderboard", "Score reset for user: ${document.id}")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("Leaderboard", "Error resetting score for user: ${document.id}", e)
-                        }
+        val progressIndicator = binding.resetProgressIndicator
+        progressIndicator.max = 100
 
-                    // Now reset the corresponding user's score to 0 in the 'users' collection
-                    val userEmail = document.getString("email") // Assuming userName is the email field
-                    if (userEmail != null) {
-                        val usersRef = FirebaseFirestore.getInstance().collection("users")
-                        usersRef.document(userEmail)
-                            .update("score", 0)  // Reset the user's score to 0
-                            .addOnSuccessListener {
-                                Log.d("Leaderboard", "User score reset for: $userEmail")
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e("Leaderboard", "Error resetting user score for: $userEmail", e)
-                            }
-                    }
+        // Calculate initial progress based on current time
+        val currentTime = System.currentTimeMillis()
+        val elapsedTime = currentTime % RESET_INTERVAL_MS
+        val remainingTime = RESET_INTERVAL_MS - elapsedTime
+        val initialProgress = ((remainingTime.toFloat() / RESET_INTERVAL_MS.toFloat()) * 100).toInt()
+
+        animator?.cancel()
+        animator = ValueAnimator.ofInt(initialProgress, 0).apply {
+            duration = remainingTime  // Set duration to actual remaining time
+            interpolator = LinearInterpolator()
+
+            addUpdateListener { animation ->
+                if (_binding == null) {
+                    cancel()
+                    return@addUpdateListener
                 }
+                val progress = animation.animatedValue as Int
+                progressIndicator.progress = progress
+
+                // Calculate remaining time directly from current time
+                val currentTimeInAnimation = System.currentTimeMillis()
+                val elapsedTimeInAnimation = currentTimeInAnimation % RESET_INTERVAL_MS
+                val remainingTimeInAnimation = RESET_INTERVAL_MS - elapsedTimeInAnimation
+
+                binding.timerTextView.text = formatTimeRemaining(remainingTimeInAnimation)
             }
-            .addOnFailureListener { e ->
-                Log.e("Leaderboard", "Error fetching leaderboard documents", e)
-            }
+
+            addListener(onEnd = {
+                if (_binding != null) {
+                    startResetProgressAnimation()
+                }
+            })
+
+            start()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Initialize bottom sheet
+
         binding.topAppBar.setNavigationOnClickListener {
             val publishScoreBottomSheet = PublishScoreBottomSheet().apply {
                 onPublishClick = {
                     fetchUsersScore()
                     addOrUpdateLeaderboardScore()
-                    Toast.makeText(requireContext(), "GO Points published to leaderboard!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "GO Points published to leaderboard!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             publishScoreBottomSheet.show(childFragmentManager, PublishScoreBottomSheet.TAG)
         }
-
-
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -137,111 +189,29 @@ class LeaderboardFragment : Fragment() {
                     )
                     true
                 }
+
                 else -> false
             }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentLeaderboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        auth = FirebaseAuth.getInstance()
-        val firestore = FirebaseFirestore.getInstance()
-        leaderboardRef = firestore.collection("leaderboard")
-
-        // Initialize RecyclerView and Adapter
-        leaderboardAdapter = LeaderboardAdapter(leaderboardEntries)
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = leaderboardAdapter
-        }
-
-        // Fetch initial score from Firestore
-        fetchUsersScore()
-
-        // Set up Firestore snapshot listener for leaderboard
-        leaderboardRef.orderBy("score", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    // Handle error
-                    return@addSnapshotListener
-                }
-                if (snapshot != null) {
-                    leaderboardEntries.clear()
-                    for (doc in snapshot.documents) {
-                        val entry = doc.toObject(LeaderboardEntry::class.java)
-                        entry?.let { leaderboardEntries.add(it) }
-                    }
-                    leaderboardAdapter.notifyDataSetChanged()
-                }
-            }
-
-        // Display initial score
-        updateScoreDisplay()
-
-
-
-        // Periodic update of score in Firestore
-        handler.postDelayed(resetRunnable, 10000)
-
-        return root
-    }
-
-    private fun fetchLeaderboardScore() {
-        val currentUser = auth.currentUser ?: return
-        val sharedPreferences = requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
-        val userEmail = sharedPreferences.getString("user_email", "Unknown User") ?: "Unknown User"
-
-        // Query Firestore for the current user's document by email
-        leaderboardRef.whereEqualTo("userName", userEmail)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val document = querySnapshot.documents[0] // Assume each user has one document
-                    val firestoreScore = document.getLong("score")?.toInt() ?: 0 // Default to 0 if null
-                    score = firestoreScore // Initialize local score
-                    updateScoreDisplay() // Update the displayed score
-                } else {
-                    // No entry found; default score to 0
-                    score = 0 // Default to 0 if there's an error
-                    updateScoreDisplay()
-
-                }
-            }
-            .addOnFailureListener { e ->
-                // Handle error (e.g., network issue)
-                score = 0 // Default to 0 if there's an error
-                updateScoreDisplay()
-            }
-    }
 
     private fun fetchUsersScore() {
         val currentUser = auth.currentUser ?: return
-        val sharedPreferences = requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
         val userEmail = sharedPreferences.getString("user_email", "Unknown User") ?: "Unknown User"
 
-        // Log the email for debugging
-        Log.d("fetchUsersScore", "Fetching score for email: $userEmail")
-
-        // Get the document directly using the email as the document ID
         val usersRef = FirebaseFirestore.getInstance().collection("users")
         usersRef.document(userEmail)
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    val firestoreScore = document.getLong("score")?.toInt() ?: 0
-                    score = firestoreScore
+                    score = document.getLong("score")?.toInt() ?: 0
                     updateScoreDisplay()
-                    Log.d("fetchUsersScore", "Score fetched successfully: $firestoreScore")
                 } else {
                     score = 0
                     updateScoreDisplay()
-                    Log.d("fetchUsersScore", "No document found for email: $userEmail")
                 }
             }
             .addOnFailureListener { e ->
@@ -251,88 +221,75 @@ class LeaderboardFragment : Fragment() {
             }
     }
 
-    private fun updateUserId(newUserId: String) {
-        // Update any cached references to the user ID
-        // Optionally log the new user for debugging purposes
-    }
-
     private fun updateScoreDisplay() {
-        binding.tvScore.text = "GO Points: $score"
-    }
-
-
-    private fun addOrUpdateUsersScore() {
-        val currentUser = auth.currentUser ?: return
-        val userEmail = currentUser.email ?: return
-
-        // Create a map of fields to update
-        val updates = hashMapOf<String, Any>(
-            "score" to 0,
-            "lastResetTime" to System.currentTimeMillis() // Add a timestamp for the reset
-        )
-
-        // Update the score directly using the email as document ID
-        val usersRef = FirebaseFirestore.getInstance().collection("users")
-        usersRef.document(userEmail)
-            .update(updates)
-            .addOnSuccessListener {
-                Log.d("Leaderboard", "Score successfully reset to 0 for user: $userEmail")
-                // Force a refresh of the score in memory
-                score = 0
-                updateScoreDisplay()
-            }
-            .addOnFailureListener { e ->
-                Log.e("Leaderboard", "Error resetting score for user: $userEmail", e)
-            }
+        binding.tvScore.text = "$score"
     }
 
     private fun addOrUpdateLeaderboardScore() {
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
-            // No user is signed in
-            return
-        }
-
-        val userId = currentUser.uid
-        val sharedPreferences = requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        val currentUser = auth.currentUser ?: return
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
         val userEmail = sharedPreferences.getString("user_email", "Unknown User") ?: "Unknown User"
 
         val entry = LeaderboardEntry(userEmail, score)
-
-        // Add or update Firestore document for the current user
-        leaderboardRef.document(userId).set(entry)
-            .addOnSuccessListener {
-                // Successfully added or updated entry
-            }
-            .addOnFailureListener { e ->
-                // Handle error
-            }
+        leaderboardRef.document(currentUser.uid).set(entry)
     }
 
+    override fun onResume() {
+        super.onResume()
+        startResetProgressAnimation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        animator?.cancel()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        animator?.cancel()
         _binding = null
-        handler.removeCallbacks(resetRunnable) // Stop the periodic reset when fragment is destroyed
     }
 }
 
-class LeaderboardAdapter(private val entries: List<LeaderboardEntry>) : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>() {
+class LeaderboardAdapter(
+    private val entries: List<LeaderboardEntry>,
+    private val currentUserEmail: String
+) : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val userNameTextView: TextView = view.findViewById(R.id.userNameTextView)
         val scoreTextView: TextView = view.findViewById(R.id.scoreTextView)
+        val container: LinearLayout = view.findViewById(R.id.leaderboard_item_container)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_leaderboard_entry, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_leaderboard_entry, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val entry = entries[position]
+        val entry = entries[position]  // Use entries list directly instead of getItem
         holder.userNameTextView.text = entry.userName
         holder.scoreTextView.text = "GO Points: ${entry.score}"
+
+        // Handle current user highlighting
+        if (entry.userName == currentUserEmail) {
+            // Current user - use accent color
+            holder.userNameTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.sage_green))
+            holder.container.findViewById<ImageView>(R.id.profileIcon)?.setColorFilter(
+                ContextCompat.getColor(holder.itemView.context, R.color.sage_green)
+            )
+            holder.scoreTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.sage_green))
+
+        } else {
+            // Other users - use default colors
+            holder.userNameTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+            holder.container.findViewById<ImageView>(R.id.profileIcon)?.setColorFilter(
+                ContextCompat.getColor(holder.itemView.context, R.color.black)
+            )
+        }
     }
 
     override fun getItemCount() = entries.size

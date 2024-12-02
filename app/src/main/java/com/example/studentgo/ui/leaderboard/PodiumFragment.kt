@@ -9,12 +9,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.studentgo.databinding.FragmentPodiumBinding
 import com.example.studentgo.model.LeaderboardEntry
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
 class PodiumFragment : Fragment() {
     private var _binding: FragmentPodiumBinding? = null
     private val binding get() = _binding!!
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +31,7 @@ class PodiumFragment : Fragment() {
         _binding = FragmentPodiumBinding.inflate(inflater, container, false)
         
         fetchTop3Users()
+        fetchLeaderboardStats()
         
         binding.topAppBar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -70,10 +78,10 @@ class PodiumFragment : Fragment() {
         .get()
         .addOnSuccessListener { documents ->
             val totalParticipants = documents.size()
-            val highestScore = documents.maxOf { it.toObject(LeaderboardEntry::class.java).score }
-            
+            val totalScore = documents.sumOf { it.toObject(LeaderboardEntry::class.java).score }
+
             binding.totalParticipants.text = totalParticipants.toString()
-            binding.highestScore.text = highestScore.toString()
+            binding.totalScore.text = totalScore.toString()
         }
-}
+    }
 }

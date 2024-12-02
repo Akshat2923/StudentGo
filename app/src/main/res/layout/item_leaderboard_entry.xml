@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/leaderboard_item_container"
+
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -13,6 +15,7 @@
         android:gravity="center_vertical">
 
         <ImageView
+            android:id="@+id/profileIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_profile_black_24dp"
@@ -21,6 +24,7 @@
 
         <TextView
             android:id="@+id/userNameTextView"
+
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,22 +11,22 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            style="?attr/collapsingToolbarLayoutMediumStyle"
             android:layout_width="match_parent"
             android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
-            style="?attr/collapsingToolbarLayoutMediumStyle"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:contentScrim="@android:color/white"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:statusBarScrim="@android:color/white">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:elevation="0dp"
                 android:background="@color/creme"
+                android:elevation="0dp"
+                app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_arrow_back"
-                app:title="Winners Podium"
-                app:layout_collapseMode="pin"/>
+                app:title="Winners Podium" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -51,12 +50,12 @@
                 android:id="@+id/trophyImage"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/ic_podium"
-                app:tint="@color/sage_green"
                 android:layout_marginTop="16dp"
-                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_podium"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/sage_green" />
 
             <!-- First Place Card (Centered, Larger) -->
             <com.google.android.material.card.MaterialCardView
@@ -65,13 +64,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
                 android:layout_marginTop="16dp"
-                app:cardElevation="8dp"
                 app:cardCornerRadius="16dp"
-                app:strokeWidth="2dp"
-                app:strokeColor="@color/sage_green"
-                app:layout_constraintTop_toBottomOf="@id/trophyImage"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/trophyImage"
+                app:strokeColor="@color/sage_green"
+                app:strokeWidth="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -85,7 +84,7 @@
                         android:text="🏆 First Place"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                        android:textColor="@color/dark_green"/>
+                        android:textColor="@color/dark_green" />
 
                     <TextView
                         android:id="@+id/firstPlaceUser"
@@ -93,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:textAlignment="center"
-                        android:textAppearance="?attr/textAppearanceBodyLarge"/>
+                        android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                     <TextView
                         android:id="@+id/firstPlaceScore"
@@ -101,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
-                        android:textColor="@color/sage_green"/>
+                        android:textColor="@color/sage_green" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -112,13 +111,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="8dp"
-                app:cardElevation="4dp"
                 app:cardCornerRadius="12dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/light_sage"
-                app:layout_constraintTop_toBottomOf="@id/firstPlaceCard"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toStartOf="@id/thirdPlaceCard"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/thirdPlaceCard">
+                app:layout_constraintTop_toBottomOf="@id/firstPlaceCard"
+                app:strokeColor="@color/light_sage"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -132,7 +131,7 @@
                         android:text="🥈 Second Place"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/dark_green"/>
+                        android:textColor="@color/dark_green" />
 
                     <TextView
                         android:id="@+id/secondPlaceUser"
@@ -140,7 +139,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:textAlignment="center"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"/>
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
 
                     <TextView
                         android:id="@+id/secondPlaceScore"
@@ -148,7 +147,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/sage_green"/>
+                        android:textColor="@color/sage_green" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -158,13 +157,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                app:cardElevation="4dp"
                 app:cardCornerRadius="12dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/light_sage"
-                app:layout_constraintTop_toTopOf="@id/secondPlaceCard"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/secondPlaceCard"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toTopOf="@id/secondPlaceCard"
+                app:strokeColor="@color/light_sage"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -178,7 +177,7 @@
                         android:text="🥉 Third Place"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/dark_green"/>
+                        android:textColor="@color/dark_green" />
 
                     <TextView
                         android:id="@+id/thirdPlaceUser"
@@ -186,7 +185,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:textAlignment="center"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"/>
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
 
                     <TextView
                         android:id="@+id/thirdPlaceScore"
@@ -194,7 +193,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/sage_green"/>
+                        android:textColor="@color/sage_green" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -204,25 +203,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                app:cardElevation="2dp"
                 app:cardCornerRadius="12dp"
-                app:strokeWidth="1dp"
+                app:cardElevation="2dp"
+                app:layout_constraintTop_toBottomOf="@id/secondPlaceCard"
                 app:strokeColor="@color/light_sage"
-                app:layout_constraintTop_toBottomOf="@id/secondPlaceCard">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="🎉 Congratulations! 🎉"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/dark_green"/>
+                        android:textColor="@color/dark_green" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -230,7 +229,7 @@
                         android:layout_marginTop="8dp"
                         android:text="Keep exploring to earn more GO Points!"
                         android:textAlignment="center"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"/>
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -240,10 +239,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                app:cardElevation="2dp"
                 app:cardCornerRadius="12dp"
-                app:layout_constraintTop_toBottomOf="@id/congratsCard"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:cardElevation="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/congratsCard">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -254,45 +253,45 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:text="📊 Leaderboard Stats"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/dark_green"
-                        android:layout_marginBottom="8dp"/>
+                        android:textColor="@color/dark_green" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/highestScore"
+                                android:id="@+id/totalScore"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="1234"
                                 android:textAppearance="?attr/textAppearanceTitleLarge"
-                                android:textColor="@color/sage_green"/>
+                                android:textColor="@color/sage_green" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Highest Score"
-                                android:textAppearance="?attr/textAppearanceBodySmall"/>
+                                android:text="Total Score"
+                                android:textAppearance="?attr/textAppearanceBodySmall" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/totalParticipants"
@@ -300,13 +299,13 @@
                                 android:layout_height="wrap_content"
                                 android:text="42"
                                 android:textAppearance="?attr/textAppearanceTitleLarge"
-                                android:textColor="@color/sage_green"/>
+                                android:textColor="@color/sage_green" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Total Players"
-                                android:textAppearance="?attr/textAppearanceBodySmall"/>
+                                android:textAppearance="?attr/textAppearanceBodySmall" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
