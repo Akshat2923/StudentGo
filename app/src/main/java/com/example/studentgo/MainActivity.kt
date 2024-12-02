@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val resetRunnable = object : Runnable {
         override fun run() {
             resetAllScores()
-            handler.postDelayed(this, 3600000) // Reset every 10 seconds
+            handler.postDelayed(this, 3600000) // Reset every hour
         }
     }
 
